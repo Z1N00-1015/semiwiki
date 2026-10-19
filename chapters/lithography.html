@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>포토리소그래피 · SemiBook</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script defer src="../assets/js/common.js"></script>
+<script defer src="../assets/js/ch/lithography.js"></script>
+</head>
+<body data-root="../" data-chapter="lithography">
+<main class="main">
+<article class="article">
+  <header class="chapter-head">
+    <div class="eyebrow">CHAPTER 03</div>
+    <h1>포토리소그래피</h1>
+    <p class="lede">포토리소그래피는 빛으로 회로를 "인쇄"하는 기술입니다. 칩 하나의 성능과 가격을 결정하는 가장 비싸고 중요한 공정으로, 최신 EUV 노광 장비 한 대의 가격은 3천억 원이 넘습니다.</p>
+    <div class="meta"><span class="chip">⏱ 30분</span><span class="chip">🧪 실험 4개</span><span class="chip">난이도 ●●●</span></div>
+  </header>
+
+  <h2><span class="sec">3.1</span>포토 공정 8단계</h2>
+  <figure>
+    <div class="fig-body"><svg class="fig" id="steps" viewBox="0 0 880 210"></svg></div>
+    <figcaption><b>그림 3-1.</b> 트랙(코터/디벨로퍼)과 스캐너(노광기)에서 진행되는 포토 공정. 단계 위에 마우스를 올려 보세요.</figcaption>
+  </figure>
+  <div class="step-text" id="steps-text" style="margin-top:-6px"><b class="t">단계를 선택하세요</b>각 단계의 역할이 여기에 표시됩니다.</div>
+
+  <h2><span class="sec">3.2</span>스핀 코팅 — 1 µm를 균일하게</h2>
+  <p>감광액(PR)을 웨이퍼 중앙에 몇 mL 떨어뜨린 뒤 수천 rpm으로 돌리면, 원심력이 액체를 바깥으로 밀어내고 용매가 증발하면서 얇은 막이 남습니다. 300 mm 웨이퍼 전체에서 두께 편차는 수 nm 이내입니다.</p>
+  <div class="eq"><i>t</i> ∝ <i>η</i><sup><i>α</i></sup> / √<i>ω</i><span class="where">t: 막 두께, η: 점도(고형분 포함), ω: 회전 속도, α ≈ 0.4~1 (PR 조성에 따른 경험 지수, 이 실험은 0.9)</span></div>
+
+  <section class="lab" id="lab-spin">
+    <div class="lab-head"><span class="badge">LAB 3-1</span><h4>스핀 코터</h4><span class="sub">회전 속도와 점도로 두께 맞추기</span></div>
+    <div class="lab-body lab-grid">
+      <div>
+        <canvas id="spin" data-ratio="0.56"></canvas>
+      </div>
+      <div class="controls">
+        <div class="ctrl"><label>회전 속도 <output data-for="rpm"></output></label><input type="range" name="rpm" min="500" max="6000" value="3000" step="50"></div>
+        <div class="ctrl"><label>PR 점도 <output data-for="eta"></output></label><input type="range" name="eta" min="2" max="100" value="20" step="1"></div>
+        <div class="btn-row"><button class="btn primary" id="spin-go">💧 디스펜스 & 스핀</button></div>
+        <div class="readout">
+          <div class="r"><div class="k">최종 두께</div><div class="v" id="spin-t">—</div></div>
+          <div class="r"><div class="k">목표 대비</div><div class="v" id="spin-ok" style="font-size:14px">—</div></div>
+        </div>
+        <p class="hint">미션: ArF 공정용 두께 <b>100 nm ± 5</b>를 만들어 보세요. 점도가 낮은 PR이 필요합니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <h2><span class="sec">3.3</span>해상도의 한계 — 레일리 공식</h2>
+  <p>빛은 파동이라 아주 작은 구멍을 통과하면 퍼집니다(회절). 그래서 렌즈로 모을 수 있는 가장 작은 패턴 크기에는 한계가 있고, 이는 <b>파장 λ</b>와 렌즈가 빛을 모으는 각도인 <b>개구수 NA</b>로 정해집니다.</p>
+  <div class="eq"><i>CD</i> = <i>k</i>₁ · <i>λ</i> / <i>NA</i> &nbsp;&nbsp;&nbsp; <i>DOF</i> = <i>k</i>₂ · <i>λ</i> / <i>NA</i>²<span class="where">CD: 최소 선폭(임계 치수), k₁: 공정 계수(이론 한계 0.25), DOF: 초점 심도</span></div>
+  <p>해상도를 높이는 방법은 세 가지뿐입니다. ① 파장을 줄이거나(g-line → i-line → KrF → ArF → EUV), ② NA를 키우거나(물을 렌즈와 웨이퍼 사이에 채우는 <b>액침 노광</b>으로 NA &gt; 1), ③ k₁을 줄이는 것(위상 반전 마스크, OPC, 변형 조명 등)입니다. 대가로 초점 심도(DOF)는 급격히 얕아집니다.</p>
+
+  <section class="lab" id="lab-ray">
+    <div class="lab-head"><span class="badge">LAB 3-2</span><h4>레일리 해상도 계산기</h4><span class="sub">노광 세대를 거슬러 올라가 보세요</span></div>
+    <div class="lab-body lab-grid">
+      <div>
+        <canvas id="ray" data-ratio="0.6"></canvas>
+      </div>
+      <div class="controls">
+        <div class="ctrl"><span class="lbl">광원</span>
+          <select name="src">
+            <option value="g">g-line 수은램프 · 436 nm</option>
+            <option value="i">i-line 수은램프 · 365 nm</option>
+            <option value="krf">KrF 엑시머 · 248 nm</option>
+            <option value="arf">ArF 엑시머 · 193 nm</option>
+            <option value="arfi" selected>ArF 액침 · 193 nm (물)</option>
+            <option value="euv">EUV · 13.5 nm</option>
+            <option value="heuv">High-NA EUV · 13.5 nm</option>
+          </select>
+        </div>
+        <div class="ctrl"><label>개구수 NA <output data-for="na"></output></label><input type="range" name="na" min="0.2" max="1.35" value="1.35" step="0.01"></div>
+        <div class="ctrl"><label>공정 계수 k₁ <output data-for="k1"></output></label><input type="range" name="k1" min="0.25" max="0.8" value="0.3" step="0.01"></div>
+        <div class="readout">
+          <div class="r"><div class="k">최소 선폭 CD</div><div class="v" id="ray-cd">—</div></div>
+          <div class="r"><div class="k">초점 심도 DOF</div><div class="v" id="ray-dof">—</div></div>
+          <div class="r"><div class="k">최소 피치</div><div class="v" id="ray-p">—</div></div>
+          <div class="r"><div class="k">시대</div><div class="v" id="ray-era" style="font-size:13px">—</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <h2><span class="sec">3.4</span>공간상(Aerial Image) — 웨이퍼에 맺히는 빛</h2>
+  <p>마스크의 날카로운 흑백 패턴은 렌즈를 지나며 <b>푸리에 변환</b>됩니다. 마스크가 만든 회절광 중 렌즈 구경(NA/λ) 안에 들어온 차수만 웨이퍼에 도달해 다시 상을 합성합니다. 0차만 통과하면 상이 없는 균일한 빛이 되고, ±1차가 최소한 하나는 함께 들어와야 패턴이 생깁니다.</p>
+  <div class="callout fact"><span class="t">핵심 원리</span><p>피치 p인 패턴의 1차 회절광은 sin θ = λ/p 방향으로 나갑니다. 이 각도가 렌즈의 NA보다 크면 패턴 정보가 사라집니다 → 수직 조명 기준 해상 한계 p = λ/NA. 비스듬한 조명(σ, 변형 조명)을 쓰면 λ/(2NA)까지 줄어듭니다.</p></div>
+
+  <section class="lab" id="lab-aerial">
+    <div class="lab-head"><span class="badge">LAB 3-3</span><h4>공간상 시뮬레이터</h4><span class="sub">Abbe 결상 · 1D 라인/스페이스</span></div>
+    <div class="lab-body">
+      <div class="lab-grid">
+        <div>
+          <canvas id="aerial" data-ratio="0.78"></canvas>
+          <div class="legend"><span><i style="background:var(--text)"></i>마스크 크롬</span><span><i style="background:var(--accent)"></i>빛 세기 I(x)</span><span><i style="background:var(--rose)"></i>노광 문턱</span><span><i style="background:var(--fig-pr)"></i>현상 후 PR</span></div>
+        </div>
+        <div class="controls">
+          <div class="ctrl"><label>피치 p <output data-for="pitch"></output></label><input type="range" name="pitch" min="40" max="600" value="180" step="2"></div>
+          <div class="ctrl"><label>파장 λ <output data-for="lam"></output></label>
+            <div class="seg" data-name="lam"><button data-v="365">365</button><button data-v="248">248</button><button data-v="193" class="on">193</button><button data-v="13.5">13.5</button></div></div>
+          <div class="ctrl"><label>NA <output data-for="na"></output></label><input type="range" name="na" min="0.3" max="1.35" value="0.93" step="0.01"></div>
+          <div class="ctrl"><label>부분 간섭도 σ <output data-for="sig"></output></label><input type="range" name="sig" min="0" max="1" value="0.5" step="0.01"></div>
+          <div class="ctrl"><label>디포커스 <output data-for="z"></output></label><input type="range" name="z" min="-400" max="400" value="0" step="5"></div>
+          <div class="ctrl"><label>노광 문턱 <output data-for="th"></output></label><input type="range" name="th" min="0.05" max="0.95" value="0.3" step="0.01"></div>
+          <div class="ctrl"><span class="lbl">마스크</span><div class="seg" data-name="mask"><button data-v="bin" class="on">바이너리</button><button data-v="psm">교번 위상반전</button></div></div>
+        </div>
+      </div>
+      <div class="readout">
+        <div class="r"><div class="k">이미지 대비</div><div class="v" id="ae-c">—</div></div>
+        <div class="r"><div class="k">통과한 회절 차수</div><div class="v" id="ae-o" style="font-size:14px">—</div></div>
+        <div class="r"><div class="k">인쇄된 선폭</div><div class="v" id="ae-cd">—</div></div>
+        <div class="r"><div class="k">해상 여부</div><div class="v" id="ae-ok" style="font-size:14px">—</div></div>
+      </div>
+      <p class="hint">실험: 피치를 줄여 패턴이 사라지는 지점을 찾고, σ를 키우거나 위상반전 마스크를 쓰면 다시 살아나는지 확인하세요. 오른쪽 위 작은 원은 렌즈 동공(pupil)과 회절 차수입니다.</p>
+    </div>
+  </section>
+
+  <h2><span class="sec">3.5</span>오버레이 — 층과 층을 nm 단위로 맞추기</h2>
+  <p>칩은 수십 개의 층으로 이루어지고, 각 층은 아래층과 정확히 겹쳐야 합니다. 이 정렬 오차를 <b>오버레이(overlay)</b>라 하며, 최신 공정은 2 nm 이하를 요구합니다. 스캐너는 웨이퍼의 정렬 마크를 측정해 이동(shift)·회전(rotation)·배율(magnification) 오차를 보정합니다.</p>
+
+  <section class="lab" id="lab-ovl">
+    <div class="lab-head"><span class="badge">LAB 3-4</span><h4>오버레이 보정 게임</h4><span class="sub">4개의 정렬 마크 오차를 모두 2 nm 이내로!</span></div>
+    <div class="lab-body lab-grid">
+      <canvas id="ovl" data-ratio="0.82"></canvas>
+      <div class="controls">
+        <div class="ctrl"><label>X 이동 보정 <output data-for="cx"></output></label><input type="range" name="cx" min="-20" max="20" value="0" step="0.1"></div>
+        <div class="ctrl"><label>Y 이동 보정 <output data-for="cy"></output></label><input type="range" name="cy" min="-20" max="20" value="0" step="0.1"></div>
+        <div class="ctrl"><label>회전 보정 <output data-for="cr"></output></label><input type="range" name="cr" min="-1" max="1" value="0" step="0.01"></div>
+        <div class="ctrl"><label>배율 보정 <output data-for="cm"></output></label><input type="range" name="cm" min="-1" max="1" value="0" step="0.01"></div>
+        <div class="btn-row"><button class="btn primary" id="ovl-new">🎲 새 웨이퍼</button></div>
+        <div class="readout">
+          <div class="r" id="ovl-r"><div class="k">최대 잔여 오차</div><div class="v" id="ovl-max">—</div></div>
+          <div class="r"><div class="k">시도</div><div class="v" id="ovl-n">0</div></div>
+        </div>
+        <p class="hint">화살표와 안쪽 상자의 어긋남은 각 마크의 오차를 크게 확대해 보여 줍니다. 이동은 모든 화살표를 같은 방향으로, 회전은 소용돌이 모양으로, 배율은 바깥/안쪽 방향으로 움직입니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <h2><span class="sec">3.6</span>EUV — 주석 방울로 만든 빛</h2>
+  <p>13.5 nm 극자외선(EUV)은 공기는 물론 모든 렌즈 물질에 흡수됩니다. 그래서 EUV 노광기는 진공 속에서 <b>거울만으로</b> 빛을 다룹니다. 초당 5만 개의 주석 방울에 고출력 CO₂ 레이저를 두 번 쏘아 수십만 °C 플라즈마를 만들고, 거기서 나오는 빛을 Mo/Si 다층 거울로 모읍니다. 거울 하나의 반사율은 약 70%라, 10여 장을 거치면 1~2%의 빛만 웨이퍼에 도착합니다.</p>
+  <figure>
+    <div class="fig-body"><svg class="fig" id="euv" viewBox="0 0 880 330"></svg></div>
+    <figcaption><b>그림 3-2.</b> EUV 노광기의 광경로(단순화). 마스크도 투과형이 아닌 반사형입니다.</figcaption>
+  </figure>
+
+  <div class="summary">
+    <h4>📝 정리</h4>
+    <ul>
+      <li>포토 공정: 표면 처리 → 코팅 → 소프트 베이크 → 정렬·노광 → PEB → 현상 → 하드 베이크 → 검사.</li>
+      <li>스핀 코팅 두께는 회전 속도의 제곱근에 반비례한다.</li>
+      <li>해상도 CD = k₁λ/NA. 파장↓, NA↑, k₁↓ — 대가로 DOF가 얕아진다.</li>
+      <li>피치가 λ/NA보다 작으면 1차 회절광이 렌즈에 들어오지 못해 패턴이 사라진다.</li>
+      <li>오버레이는 이동·회전·배율 등 모델 성분으로 분해해 보정한다.</li>
+    </ul>
+  </div>
+  <div id="quiz"></div>
+</article>
+</main>
+</body>
+</html>

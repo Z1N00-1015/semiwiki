@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>금속 배선과 CMP · SemiBook</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script defer src="../assets/js/common.js"></script>
+<script defer src="../assets/js/ch/metallization.js"></script>
+</head>
+<body data-root="../" data-chapter="metallization">
+<main class="main">
+<article class="article">
+  <header class="chapter-head">
+    <div class="eyebrow">CHAPTER 07</div>
+    <h1>금속 배선과 CMP</h1>
+    <p class="lede">트랜지스터 수백억 개는 혼자서는 아무 일도 못 합니다. 이들을 연결하는 배선은 칩 하나에 총 길이 수십 km, 10~15층의 고층 빌딩처럼 쌓여 있습니다. 이 장에서는 배선을 만드는 <b>다마신</b> 공정과, 층마다 표면을 거울처럼 깎아 내는 <b>CMP</b>를 다룹니다.</p>
+    <div class="meta"><span class="chip">⏱ 25분</span><span class="chip">🧪 실험 3개</span><span class="chip">난이도 ●●○</span></div>
+  </header>
+
+  <h2><span class="sec">7.1</span>배선의 고층 빌딩</h2>
+  <p>아래층(M1, M2…)은 트랜지스터를 국지적으로 잇는 아주 가늘고 촘촘한 배선이고, 위로 갈수록 굵고 길어져 전원과 신호를 칩 전체로 나릅니다. 층과 층은 <b>비아(via)</b>라는 수직 기둥으로 연결됩니다.</p>
+  <figure>
+    <div class="fig-body"><svg class="fig" id="stack" viewBox="0 0 860 380"></svg></div>
+    <figcaption><b>그림 7-1.</b> 다층 배선 단면 (비율은 과장). 층 위에 마우스를 올리면 설명이 나옵니다.</figcaption>
+  </figure>
+  <div class="step-text" id="stack-text" style="margin-top:-6px"><b class="t">층을 선택하세요</b>각 배선층의 특징이 여기에 표시됩니다.</div>
+
+  <h2><span class="sec">7.2</span>왜 구리, 왜 다마신?</h2>
+  <p>1990년대까지 배선은 알루미늄이었습니다. 구리는 저항이 40% 낮고 전자 이동(electromigration)에 강하지만 치명적인 문제가 있었습니다. <b>구리는 플라즈마로 식각되지 않습니다</b>(휘발성 화합물이 생기지 않음). 그래서 IBM은 1997년 발상을 뒤집었습니다. 금속을 깎는 대신 <b>절연막에 홈을 파고 구리를 채운 뒤 넘친 것을 갈아 내는</b> 방식, 고대 다마스쿠스의 상감 기법에서 이름을 딴 <b>다마신(damascene)</b>입니다.</p>
+
+  <section class="lab" id="lab-dama">
+    <div class="lab-head"><span class="badge">LAB 7-1</span><h4>듀얼 다마신 스텝</h4><span class="sub">비아와 배선을 한 번에</span></div>
+    <div class="lab-body">
+      <canvas id="dama" data-ratio="0.46"></canvas>
+      <div class="stepper">
+        <button class="btn" id="dm-prev">← 이전</button>
+        <button class="btn primary" id="dm-play">▶ 자동 재생</button>
+        <button class="btn" id="dm-next">다음 →</button>
+        <div class="dots" id="dm-dots"></div>
+      </div>
+      <div class="step-text" id="dm-text"></div>
+    </div>
+  </section>
+
+  <h2><span class="sec">7.3</span>CMP — 화학적 기계적 연마</h2>
+  <p>CMP는 웨이퍼를 뒤집어 회전하는 연마 패드에 누르고, 연마 입자와 화학 약품이 섞인 슬러리를 흘려 표면을 깎는 공정입니다. 화학 반응이 표면을 무르게 하고, 입자가 기계적으로 긁어 냅니다. 제거 속도는 <b>프레스턴 방정식</b>을 따릅니다.</p>
+  <div class="eq"><i>RR</i> = <i>K</i><sub>p</sub> · <i>P</i> · <i>V</i><span class="where">RR: 제거 속도, K<sub>p</sub>: 프레스턴 계수(재료·슬러리), P: 압력, V: 상대 속도</span></div>
+  <p>패드는 탄성이 있어 튀어나온 곳을 더 세게 누르므로(높은 압력) 표면이 평탄해집니다. 하지만 패드가 넓은 구리 위에서 살짝 휘어 들어가면 구리가 접시처럼 파이는 <b>디싱(dishing)</b>, 촘촘한 배선 영역 전체가 내려앉는 <b>에로전(erosion)</b>이 생깁니다.</p>
+
+  <section class="lab" id="lab-cmp">
+    <div class="lab-head"><span class="badge">LAB 7-2</span><h4>CMP 시뮬레이터</h4><span class="sub">패턴 의존 연마 모델</span></div>
+    <div class="lab-body">
+      <canvas id="cmp" data-ratio="0.42"></canvas>
+      <div class="lab-grid even" style="margin-top:12px">
+        <div class="controls">
+          <div class="ctrl"><label>압력 P <output data-for="P"></output></label><input type="range" name="P" min="1" max="6" value="3" step="0.1"></div>
+          <div class="ctrl"><label>상대 속도 V <output data-for="V"></output></label><input type="range" name="V" min="0.5" max="2" value="1" step="0.05"></div>
+          <div class="ctrl"><label>선택비 Cu : 산화막 <output data-for="sel"></output></label><input type="range" name="sel" min="1" max="100" value="30" step="1"></div>
+        </div>
+        <div class="controls">
+          <div class="ctrl"><label>패드 강성 (평탄화 길이) <output data-for="Lp"></output></label><input type="range" name="Lp" min="10" max="120" value="60" step="1"></div>
+          <div class="ctrl"><label>배열 패턴 밀도 <output data-for="dens"></output></label><input type="range" name="dens" min="0.2" max="0.9" value="0.6" step="0.05"></div>
+          <div class="btn-row"><button class="btn primary" id="cmp-go">▶ 연마</button><button class="btn" id="cmp-reset">↺ 초기화</button></div>
+        </div>
+      </div>
+      <div class="readout">
+        <div class="r"><div class="k">연마 시간</div><div class="v" id="cm-t">—</div></div>
+        <div class="r"><div class="k">Cu 잔막 (필드)</div><div class="v" id="cm-ob">—</div></div>
+        <div class="r"><div class="k">디싱 (넓은 배선)</div><div class="v" id="cm-dish">—</div></div>
+        <div class="r"><div class="k">에로전 (배열)</div><div class="v" id="cm-ero">—</div></div>
+        <div class="r"><div class="k">엔드포인트</div><div class="v" id="cm-ep" style="font-size:14px">—</div></div>
+      </div>
+      <p class="hint">필드의 구리가 다 제거된 순간(엔드포인트)에 멈추는 것이 이상적입니다. 선택비가 높을수록 산화막은 덜 깎이지만 구리 디싱이 커집니다. 패드가 단단할수록(평탄화 길이↑) 디싱은 줄어듭니다.</p>
+    </div>
+  </section>
+
+  <h2><span class="sec">7.4</span>배선이 가늘어지면 생기는 일</h2>
+  <p>배선 폭이 전자의 <b>평균 자유 행로</b>(구리 약 39 nm)와 비슷해지면 전자가 표면과 결정립계에서 산란해 비저항이 급격히 커집니다. 게다가 구리는 확산을 막는 배리어(TaN/Ta)가 필요한데, 이 막은 거의 줄일 수 없어 구리가 차지할 공간을 잡아먹습니다. 그래서 가장 가는 배선에는 평균 자유 행로가 짧고 배리어가 필요 없는 <b>루테늄(Ru)·코발트(Co)·몰리브덴(Mo)</b>이 대안으로 연구됩니다.</p>
+
+  <section class="lab" id="lab-rc">
+    <div class="lab-head"><span class="badge">LAB 7-3</span><h4>배선 저항 스케일링 & RC 지연</h4><span class="sub">크기 효과 + 배리어 두께 고려</span></div>
+    <div class="lab-body lab-grid">
+      <div>
+        <canvas id="rc" data-ratio="0.66"></canvas>
+      </div>
+      <div class="controls">
+        <div class="ctrl"><label>배선 폭 W <output data-for="W"></output></label><input type="range" name="W" min="6" max="100" value="20" step="1"></div>
+        <div class="ctrl"><label>배리어 두께 (Cu) <output data-for="tb"></output></label><input type="range" name="tb" min="0" max="4" value="2" step="0.1"></div>
+        <div class="ctrl"><label>배선 길이 <output data-for="L"></output></label><input type="range" name="L" min="1" max="1000" value="100" step="1"></div>
+        <div class="ctrl"><label>절연막 유전율 k <output data-for="k"></output></label><input type="range" name="k" min="2" max="4" value="2.7" step="0.1"></div>
+        <div class="readout" id="rc-out"></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="summary">
+    <h4>📝 정리</h4>
+    <ul>
+      <li>구리는 식각이 어려워 "홈 파기 → 배리어/시드 → 도금 → CMP"의 다마신 공정으로 배선을 만든다.</li>
+      <li>CMP 제거 속도는 프레스턴 방정식(RR = Kp·P·V)을 따르며, 패턴 밀도에 따라 디싱·에로전이 생긴다.</li>
+      <li>배선이 가늘어지면 크기 효과와 배리어 때문에 저항이 급증 → Ru·Co 등 대체 금속, low-k 절연막.</li>
+    </ul>
+  </div>
+  <div id="quiz"></div>
+</article>
+</main>
+</body>
+</html>

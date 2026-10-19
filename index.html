@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SemiBook · 반도체 공정 인터랙티브 북</title>
+<meta name="description" content="웨이퍼부터 패키징까지, 반도체 8대 공정을 시각 자료와 인터랙티브 실험으로 배우는 웹 교과서">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="assets/css/style.css">
+<script defer src="assets/js/common.js"></script>
+<script defer src="assets/js/ch/home.js"></script>
+</head>
+<body data-root="./" data-chapter="home">
+<main class="main">
+  <section class="hero">
+    <div>
+      <div class="chapter-head" style="margin:0">
+        <div class="eyebrow">INTERACTIVE TEXTBOOK · 반도체 공정</div>
+      </div>
+      <h1>모래 한 줌이<br><em>수백억 개의 트랜지스터</em>가<br>되기까지</h1>
+      <p>SemiBook은 반도체 제조 공정을 <b>직접 만져 보며</b> 배우는 웹 교과서입니다. 슬라이더를 움직이고, 시뮬레이션을 돌리고, 웨이퍼 위에서 일어나는 일을 눈으로 확인하세요. 수식은 최소한으로, 감각은 최대한으로.</p>
+      <div class="btn-row" style="margin-top:1.4rem">
+        <a class="btn primary" href="chapters/intro.html">처음부터 읽기 →</a>
+        <a class="btn" href="#toc">목차 보기</a>
+      </div>
+      <div class="stats">
+        <div><b id="st-ch">11</b><span>챕터</span></div>
+        <div><b id="st-lab">30+</b><span>인터랙티브 실험</span></div>
+        <div><b>~3 nm</b><span>최신 공정 노드</span></div>
+      </div>
+    </div>
+    <canvas class="hero-canvas" id="hero" aria-label="회전하는 웨이퍼 애니메이션"></canvas>
+  </section>
+
+  <h2 class="section-title">반도체 공정의 흐름</h2>
+  <div style="max-width:1120px;margin:0 auto">
+    <div class="lab" style="margin:0">
+      <div class="lab-head"><span class="badge">MAP</span><h4>8대 공정 지도</h4><span class="sub">단계를 눌러 해당 챕터로 이동</span></div>
+      <div class="lab-body">
+        <svg class="fig" id="flowmap" viewBox="0 0 1080 280" role="img" aria-label="반도체 8대 공정 흐름도"></svg>
+        <p class="hint">전공정(FEOL·BEOL)은 산화 → 노광 → 식각 → 증착/이온주입 → 배선의 루프를 수십~수백 번 반복합니다. 후공정에서는 테스트와 패키징으로 칩을 완성합니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title" id="toc">목차</h2>
+  <div class="toc-grid" id="tocgrid" style="max-width:1120px;margin:0 auto"></div>
+
+  <h2 class="section-title">이 책을 읽는 법</h2>
+  <div class="cards" style="max-width:1120px;margin:0 auto">
+    <div class="card"><div class="ico">🧪</div><h5>LAB 상자</h5><p>보라색 머리띠가 달린 상자는 직접 조작할 수 있는 실험입니다. 값을 극단으로 바꿔 보는 것이 가장 빨리 배우는 방법입니다.</p></div>
+    <div class="card"><div class="ico">📐</div><h5>단순화된 물리</h5><p>모든 시뮬레이션은 실제 공정 물리(Deal–Grove, 레일리, 프레스턴, LSS 등)를 바탕으로 하되 교육용으로 단순화했습니다.</p></div>
+    <div class="card"><div class="ico">🧠</div><h5>확인 퀴즈</h5><p>각 장 끝의 퀴즈를 모두 풀면 사이드바에 ✓ 표시가 남습니다. 진도는 브라우저에 저장됩니다.</p></div>
+    <div class="card"><div class="ico">🌗</div><h5>다크 모드</h5><p>오른쪽 위 버튼으로 밝은/어두운 테마를 바꿀 수 있습니다. 모든 그림이 테마에 맞춰 다시 그려집니다.</p></div>
+  </div>
+  <footer class="site-foot" style="max-width:1120px;margin:4rem auto 0">SemiBook · 반도체 공정 인터랙티브 북 — 시뮬레이션은 교육용 단순화 모델입니다.</footer>
+</main>
+</body>
+</html>

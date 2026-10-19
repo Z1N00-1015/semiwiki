@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>첨단 트랜지스터 · SemiBook</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script defer src="../assets/js/common.js"></script>
+<script defer src="../assets/js/ch/transistor.js"></script>
+</head>
+<body data-root="../" data-chapter="transistor">
+<main class="main">
+<article class="article">
+  <header class="chapter-head">
+    <div class="eyebrow">CHAPTER 10</div>
+    <h1>첨단 트랜지스터</h1>
+    <p class="lede">지금까지 배운 모든 공정은 결국 하나의 목표를 위한 것입니다. 더 작고, 더 빠르고, 전기를 덜 새는 <b>스위치</b>. 이 장에서는 MOSFET의 동작 원리부터, 평면 → FinFET → GAA로 이어진 구조 혁신이 왜 필요했는지 직접 계산해 봅니다.</p>
+    <div class="meta"><span class="chip">⏱ 30분</span><span class="chip">🧪 실험 4개</span><span class="chip">난이도 ●●●</span></div>
+  </header>
+
+  <h2><span class="sec">10.1</span>MOSFET — 전압으로 여닫는 수문</h2>
+  <p>MOSFET은 게이트 전압으로 소스와 드레인 사이의 전자 통로(<b>채널</b>)를 만들었다 없앴다 하는 스위치입니다. 게이트에 문턱 전압 V<sub>t</sub>보다 큰 전압을 걸면 p형 기판 표면에 전자가 모여 n형 채널이 생깁니다(반전). 드레인 전압을 키우면 전류가 늘다가, 드레인 쪽 채널이 끊기는 <b>핀치오프</b> 이후로는 거의 일정해집니다(포화).</p>
+
+  <section class="lab" id="lab-mos">
+    <div class="lab-head"><span class="badge">LAB 10-1</span><h4>MOSFET 동작 시뮬레이터</h4><span class="sub">점진적 채널 근사 · NMOS</span></div>
+    <div class="lab-body">
+      <div class="lab-grid even">
+        <canvas id="mos" data-ratio="0.62"></canvas>
+        <canvas id="idvd" data-ratio="0.62"></canvas>
+      </div>
+      <div class="lab-grid even" style="margin-top:12px">
+        <div class="ctrl"><label>게이트 전압 V<sub>GS</sub> <output data-for="vg"></output></label><input type="range" name="vg" min="0" max="1.2" value="0.9" step="0.01"></div>
+        <div class="ctrl"><label>드레인 전압 V<sub>DS</sub> <output data-for="vd"></output></label><input type="range" name="vd" min="0" max="1.2" value="0.3" step="0.01"></div>
+      </div>
+      <div class="readout">
+        <div class="r"><div class="k">동작 영역</div><div class="v" id="ms-reg" style="font-size:14px">—</div></div>
+        <div class="r"><div class="k">드레인 전류</div><div class="v" id="ms-id">—</div></div>
+        <div class="r"><div class="k">V<sub>GS</sub> − V<sub>t</sub></div><div class="v" id="ms-ov">—</div></div>
+      </div>
+    </div>
+  </section>
+
+  <h2><span class="sec">10.2</span>왜 평면 트랜지스터는 한계에 부딪혔나</h2>
+  <p>게이트 길이가 20 nm 근처로 줄어들자 문제가 생겼습니다. 드레인이 채널에 너무 가까워져 게이트 대신 드레인 전압이 채널을 열어 버리는 <b>단채널 효과</b>(DIBL)가 커지고, 꺼져 있어야 할 때도 전류가 새기 시작했습니다. 해법은 게이트가 채널을 <b>더 많은 면에서 감싸는 것</b>이었습니다.</p>
+  <div class="cards">
+    <div class="card"><div class="ico">▭</div><h5>Planar (~28 nm)</h5><p>게이트가 채널 위 한 면만 제어. 채널 아래쪽은 게이트 영향이 약해 누설 경로가 됩니다.</p></div>
+    <div class="card"><div class="ico">⊓</div><h5>FinFET (22~3 nm)</h5><p>채널을 지느러미(fin)처럼 세우고 게이트가 세 면을 감쌉니다. 2011년 Intel 22 nm에서 처음 양산.</p></div>
+    <div class="card"><div class="ico">◫</div><h5>GAA / 나노시트 (3~2 nm)</h5><p>얇은 실리콘 판을 여러 장 쌓고 게이트가 네 면을 모두 감쌉니다. 시트 폭으로 전류를 조절할 수 있습니다.</p></div>
+    <div class="card"><div class="ico">⧉</div><h5>CFET (차세대)</h5><p>NMOS와 PMOS를 위아래로 쌓아 면적을 절반 가까이 줄이는 구조. 2030년대 도입 예상.</p></div>
+  </div>
+
+  <section class="lab" id="lab-gate">
+    <div class="lab-head"><span class="badge">LAB 10-2</span><h4>게이트 구조와 정전기적 제어력</h4><span class="sub">채널 단면의 라플라스 방정식 수치 해</span></div>
+    <div class="lab-body lab-grid">
+      <div>
+        <svg class="fig" id="g3d" viewBox="0 0 520 250"></svg>
+        <canvas id="gpot" data-ratio="0.5" style="margin-top:10px"></canvas>
+      </div>
+      <div class="controls">
+        <div class="ctrl"><span class="lbl">구조</span><div class="seg" data-name="st"><button data-v="planar">Planar</button><button data-v="fin" class="on">FinFET</button><button data-v="gaa">GAA</button></div></div>
+        <div class="ctrl"><label>채널 두께 / 핀 폭 <output data-for="t"></output></label><input type="range" name="t" min="3" max="20" value="7" step="0.5"></div>
+        <div class="readout">
+          <div class="r"><div class="k">게이트 제어 효율</div><div class="v" id="gt-eff">—</div></div>
+          <div class="r"><div class="k">최약점 전위</div><div class="v" id="gt-min">—</div></div>
+        </div>
+        <p class="hint">아래 열지도는 게이트에 1 V를 걸었을 때 채널 단면의 전위입니다(밝을수록 게이트 영향이 강함). 어두운 곳은 게이트가 잘 제어하지 못해 누설 전류가 흐르는 길입니다. 채널을 얇게 할수록 제어력이 좋아지는 것도 확인하세요.</p>
+      </div>
+    </div>
+  </section>
+
+  <h2><span class="sec">10.3</span>서브문턱 기울기 — 스위치의 날카로움</h2>
+  <p>좋은 스위치는 "꺼짐"에서 "켜짐"으로 날카롭게 바뀌어야 합니다. 이 날카로움은 전류를 10배 늘리는 데 필요한 게이트 전압, <b>서브문턱 기울기(SS)</b>로 표현합니다. 실온에서 이론적 한계는 <b>60 mV/decade</b>이고(볼츠만 한계), 게이트 제어력이 좋을수록 이 한계에 가까워집니다.</p>
+  <div class="eq"><i>SS</i> = <i>dV</i><sub>GS</sub> / <i>d</i>(log₁₀ <i>I</i><sub>D</sub>) ≥ (<i>kT</i>/<i>q</i>) ln 10 ≈ 60 mV/dec</div>
+
+  <section class="lab" id="lab-idvg">
+    <div class="lab-head"><span class="badge">LAB 10-3</span><h4>I<sub>D</sub>–V<sub>G</sub> 곡선 비교</h4><span class="sub">로그 스케일 · 폭 1 µm당 전류</span></div>
+    <div class="lab-body lab-grid">
+      <canvas id="idvg" data-ratio="0.66"></canvas>
+      <div class="controls">
+        <div class="ctrl"><label>드레인 전압 V<sub>DS</sub> <output data-for="vd"></output></label><input type="range" name="vd" min="0.05" max="0.8" value="0.75" step="0.01"></div>
+        <div class="ctrl"><label>온도 <output data-for="T"></output></label><input type="range" name="T" min="250" max="400" value="300" step="5"></div>
+        <div class="readout" id="iv-out"></div>
+        <p class="hint">V<sub>DS</sub>를 바꾸면 곡선이 왼쪽으로 이동합니다(DIBL). 평면 트랜지스터가 가장 많이 움직입니다. 온도가 오르면 SS가 나빠져 누설이 급증합니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <h2><span class="sec">10.4</span>"3나노"는 정말 3 nm일까?</h2>
+  <p>공정 이름의 숫자는 1990년대 후반까지는 게이트 길이와 비슷했지만, 이후로는 사실상 세대를 나타내는 브랜드가 되었습니다. 실제 미세화 정도는 <b>게이트 피치(CPP)</b>와 <b>금속 피치(MP)</b>, 그리고 <b>트랜지스터 밀도</b>로 보는 것이 정확합니다.</p>
+
+  <section class="lab" id="lab-road">
+    <div class="lab-head"><span class="badge">LAB 10-4</span><h4>공정 노드 로드맵</h4><span class="sub">점을 눌러 세대별 정보 확인 (대략값)</span></div>
+    <div class="lab-body lab-grid">
+      <canvas id="road" data-ratio="0.66"></canvas>
+      <div class="controls">
+        <div class="ctrl"><span class="lbl">표시 지표</span><div class="seg" data-name="m"><button data-v="cpp" class="on">게이트 피치 vs 노드명</button><button data-v="den">트랜지스터 밀도</button></div></div>
+        <div class="step-text" id="rd-info" style="min-height:150px"><b class="t">노드를 선택하세요</b>점을 클릭하거나 마우스를 올리면 정보가 표시됩니다.</div>
+        <div class="legend"><span><i style="background:var(--blue)"></i>Planar</span><span><i style="background:var(--teal)"></i>FinFET</span><span><i style="background:var(--accent)"></i>GAA</span><span><i style="background:var(--muted)"></i>전망</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="callout fact"><span class="t">다음 무대: 후면 전력 공급</span><p>배선은 지금까지 트랜지스터 위에만 쌓였습니다. 최신 공정(Intel 18A PowerVia, TSMC A16 등)은 웨이퍼를 뒤집어 <b>뒷면에 전원 배선</b>을 만들어, 앞면은 신호 배선만 담당하게 합니다. 전압 강하가 줄고 배선 혼잡이 풀립니다. 7장의 배선 기술과 9장의 웨이퍼 본딩 기술이 결합된 결과입니다.</p></div>
+
+  <div class="summary">
+    <h4>📝 정리</h4>
+    <ul>
+      <li>MOSFET: V<sub>GS</sub> &gt; V<sub>t</sub>에서 채널 형성, V<sub>DS</sub> &gt; V<sub>GS</sub>−V<sub>t</sub>에서 핀치오프 → 포화.</li>
+      <li>미세화로 단채널 효과가 커지자 게이트가 채널을 감싸는 면을 1 → 3 → 4면으로 늘렸다.</li>
+      <li>SS의 이론 한계는 실온 60 mV/dec. 게이트 제어력이 좋을수록 누설이 적고 낮은 전압에서 동작한다.</li>
+      <li>노드 이름은 브랜드일 뿐, 실제 척도는 CPP·MP·트랜지스터 밀도다.</li>
+    </ul>
+  </div>
+  <div id="quiz"></div>
+
+  <div class="callout tip"><span class="t">🎓 책을 끝까지 읽었습니다!</span><p>모든 퀴즈를 풀었다면 사이드바에 ✓ 표시가 모였을 거예요. <a href="glossary.html">용어 사전</a>에서 핵심 개념을 다시 훑어보세요.</p></div>
+</article>
+</main>
+</body>
+</html>

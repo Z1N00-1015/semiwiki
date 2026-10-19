@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>산화 공정 · SemiBook</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script defer src="../assets/js/common.js"></script>
+<script defer src="../assets/js/ch/oxidation.js"></script>
+</head>
+<body data-root="../" data-chapter="oxidation">
+<main class="main">
+<article class="article">
+  <header class="chapter-head">
+    <div class="eyebrow">CHAPTER 02</div>
+    <h1>산화 공정</h1>
+    <p class="lede">실리콘이 반도체의 왕좌를 차지한 숨은 이유는 바로 <b>산화막(SiO₂)</b>입니다. 실리콘을 뜨거운 산소에 노출시키기만 하면 표면에 매끈하고 단단한 유리 막이 저절로 자랍니다. 게르마늄이나 GaAs는 이렇게 좋은 산화막을 만들지 못합니다.</p>
+    <div class="meta"><span class="chip">⏱ 20분</span><span class="chip">🧪 실험 3개</span><span class="chip">난이도 ●●○</span></div>
+  </header>
+
+  <h2><span class="sec">2.1</span>산화막은 어디에 쓰일까</h2>
+  <div class="cards">
+    <div class="card"><div class="ico">🚪</div><h5>게이트 절연막</h5><p>트랜지스터의 게이트와 채널 사이를 전기적으로 분리합니다. 두께 1~2 nm, 원자 몇 층에 불과합니다.</p></div>
+    <div class="card"><div class="ico">🧱</div><h5>소자 분리</h5><p>이웃 트랜지스터끼리 전류가 새지 않도록 두꺼운 산화막 벽(STI, LOCOS)을 세웁니다.</p></div>
+    <div class="card"><div class="ico">🛡️</div><h5>마스크 · 보호막</h5><p>이온 주입이나 확산 때 원하지 않는 곳을 가리고, 완성된 칩 표면을 오염과 습기로부터 지킵니다.</p></div>
+  </div>
+
+  <h2><span class="sec">2.2</span>건식 산화 vs 습식 산화</h2>
+  <p>산화는 수십~수백 장의 웨이퍼를 석영 보트에 세워 <b>퍼니스(furnace)</b>에 넣고 800~1200 °C로 가열해 진행합니다. 어떤 기체를 흘려 주느냐에 따라 두 가지로 나뉩니다.</p>
+  <figure>
+    <div class="fig-body"><svg class="fig" id="furnace" viewBox="0 0 860 220"></svg></div>
+    <figcaption><b>그림 2-1.</b> 수평형 산화 퍼니스. 기체가 왼쪽에서 들어와 웨이퍼 사이를 흐르며 표면과 반응합니다.</figcaption>
+  </figure>
+  <div class="table-wrap"><table>
+    <tr><th></th><th>건식 산화 (Dry)</th><th>습식 산화 (Wet)</th></tr>
+    <tr><td><b>반응식</b></td><td>Si + O₂ → SiO₂</td><td>Si + 2H₂O → SiO₂ + 2H₂</td></tr>
+    <tr><td><b>성장 속도</b></td><td>느림</td><td>빠름 (약 5~10배)</td></tr>
+    <tr><td><b>막질</b></td><td>치밀하고 우수 · 결함 적음</td><td>상대적으로 덜 치밀</td></tr>
+    <tr><td><b>용도</b></td><td>게이트 산화막 (얇고 정밀)</td><td>필드 산화막 (두꺼운 막)</td></tr>
+  </table></div>
+
+  <h2><span class="sec">2.3</span>Deal–Grove 모델</h2>
+  <p>산화막이 자라려면 산화제(O₂ 또는 H₂O)가 이미 만들어진 산화막을 <b>뚫고 확산</b>해 Si 계면까지 가야 합니다. 1965년 Deal과 Grove는 이 과정을 기체 → 산화막 표면 → 확산 → 계면 반응의 직렬 흐름으로 모델링했습니다.</p>
+  <div class="eq"><i>x</i>² + <i>A x</i> = <i>B</i> (<i>t</i> + <i>τ</i>)<span class="where">B: 포물선 속도 상수(확산 지배), B/A: 선형 속도 상수(반응 지배), τ: 초기 산화막 보정</span></div>
+  <ul>
+    <li><b>얇을 때 (x ≪ A):</b> x ≈ (B/A)·t — 계면 <b>반응 속도</b>가 병목. 두께가 시간에 비례해 자랍니다.</li>
+    <li><b>두꺼울 때 (x ≫ A):</b> x ≈ √(B·t) — 산화제의 <b>확산</b>이 병목. 두께를 2배로 하려면 시간이 4배 필요합니다.</li>
+  </ul>
+
+  <section class="lab" id="lab-dg">
+    <div class="lab-head"><span class="badge">LAB 2-1</span><h4>Deal–Grove 계산기</h4><span class="sub">(100) / (111) 실리콘, 1기압</span></div>
+    <div class="lab-body lab-grid">
+      <div>
+        <canvas id="dg" data-ratio="0.62"></canvas>
+        <div class="legend"><span><i style="background:var(--accent)"></i>선택 조건</span><span><i style="background:var(--blue)"></i>습식</span><span><i style="background:var(--amber)"></i>건식</span><span><i style="background:transparent;border-top:2px dashed var(--muted);height:0"></i>선형/포물선 근사</span></div>
+      </div>
+      <div class="controls">
+        <div class="ctrl"><span class="lbl">분위기</span><div class="seg" data-name="amb"><button data-v="dry" class="on">건식 O₂</button><button data-v="wet">습식 H₂O</button></div></div>
+        <div class="ctrl"><span class="lbl">결정면</span><div class="seg" data-name="ori"><button data-v="100" class="on">(100)</button><button data-v="111">(111)</button></div></div>
+        <div class="ctrl"><label>온도 <output data-for="T"></output></label><input type="range" name="T" min="800" max="1200" value="1000" step="5"></div>
+        <div class="ctrl"><label>시간 <output data-for="t"></output></label><input type="range" name="t" min="1" max="600" value="60" step="1"></div>
+        <div class="ctrl"><label>초기 두께 x₀ <output data-for="x0"></output></label><input type="range" name="x0" min="0" max="50" value="0" step="1"></div>
+        <div class="ctrl"><label style="justify-content:flex-start;gap:8px"><input type="checkbox" name="asym" checked> 근사선 보기</label></div>
+        <div class="readout">
+          <div class="r"><div class="k">산화막 두께</div><div class="v" id="dg-x">—</div></div>
+          <div class="r"><div class="k">지배 영역</div><div class="v" id="dg-reg" style="font-size:14px">—</div></div>
+          <div class="r"><div class="k">B</div><div class="v" id="dg-b" style="font-size:13px">—</div></div>
+          <div class="r"><div class="k">B/A</div><div class="v" id="dg-ba" style="font-size:13px">—</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="callout tip"><span class="t">실험 과제</span><p>① 1000 °C 건식에서 1시간에 몇 nm가 자라나요? (약 40 nm) ② 같은 조건을 습식으로 바꾸면? ③ 온도를 100 °C 올리면 두께가 몇 배가 되나요? 활성화 에너지가 클수록 온도에 민감합니다.</p></div>
+
+  <h2><span class="sec">2.4</span>실리콘은 얼마나 소모될까</h2>
+  <p>산화막은 실리콘 표면 <b>위에 덧칠</b>되는 것이 아니라 실리콘을 <b>먹으며</b> 자랍니다. SiO₂의 부피가 Si보다 크기 때문에 두께 x의 산화막을 만들면 원래 표면 아래로 0.44x, 위로 0.56x가 차지합니다. 질화막(Si₃N₄)으로 일부를 가리면 가린 곳은 산화되지 않는데, 이것이 LOCOS 소자 분리 기술입니다.</p>
+
+  <section class="lab" id="lab-locos">
+    <div class="lab-head"><span class="badge">LAB 2-2</span><h4>실리콘 소모와 버즈비크</h4><span class="sub">산화를 진행시키며 단면을 관찰</span></div>
+    <div class="lab-body">
+      <canvas id="locos" data-ratio="0.42"></canvas>
+      <div class="lab-grid even" style="margin-top:12px">
+        <div class="ctrl"><label>산화막 두께 <output data-for="tox"></output></label><input type="range" name="tox" min="0" max="600" value="300" step="5"></div>
+        <div class="ctrl"><span class="lbl">구조</span><div class="seg" data-name="mode"><button data-v="flat">평면 산화</button><button data-v="locos" class="on">LOCOS (질화막 마스크)</button></div></div>
+      </div>
+      <p class="hint">질화막 가장자리 아래로 산화제가 옆으로 파고들어 새 부리 모양의 <b>버즈비크(bird's beak)</b>가 생깁니다. 이 때문에 면적이 낭비되어, 미세 공정에서는 트렌치를 파고 산화막을 채우는 STI로 대체되었습니다.</p>
+    </div>
+  </section>
+
+  <h2><span class="sec">2.5</span>두께가 색이 된다 — 박막 간섭</h2>
+  <p>산화된 웨이퍼를 보면 파랑, 보라, 금색 등 화려한 색을 띱니다. 산화막 윗면과 아랫면(Si 계면)에서 반사된 빛이 서로 간섭하면서 특정 파장만 강해지기 때문입니다. 엔지니어들은 오랫동안 이 색만 보고 두께를 가늠했습니다.</p>
+  <div class="eq">2 <i>n</i><sub>ox</sub> <i>d</i> = <i>m λ</i> &nbsp;(보강 간섭, 근사)<span class="where">n<sub>ox</sub> ≈ 1.46, d: 산화막 두께. 실제 계산은 Si의 복소 굴절률과 위상을 모두 고려했습니다.</span></div>
+
+  <section class="lab" id="lab-color">
+    <div class="lab-head"><span class="badge">LAB 2-3</span><h4>산화막 간섭색 시뮬레이터</h4><span class="sub">프레넬 박막 반사 + CIE 색 변환</span></div>
+    <div class="lab-body">
+      <div class="lab-grid">
+        <canvas id="cwafer" data-ratio="0.72"></canvas>
+        <div class="controls">
+          <div class="ctrl"><label>평균 두께 <output data-for="d"></output></label><input type="range" name="d" min="0" max="1000" value="120" step="1"></div>
+          <div class="ctrl"><label>두께 불균일 (중심→가장자리) <output data-for="nu"></output></label><input type="range" name="nu" min="0" max="60" value="0" step="1"></div>
+          <div class="readout">
+            <div class="r"><div class="k">관찰 색</div><div class="v" id="c-sw" style="height:28px;border-radius:6px"></div></div>
+            <div class="r"><div class="k">반사 최대 파장</div><div class="v" id="c-pk">—</div></div>
+          </div>
+          <canvas id="cspec" data-ratio="0.55"></canvas>
+        </div>
+      </div>
+      <canvas id="cbar" style="margin-top:14px" data-ratio="0.09"></canvas>
+      <p class="hint">아래 띠는 0~1000 nm 산화막의 색 차트입니다. 띠를 클릭하면 그 두께로 이동합니다. 두께가 두꺼워지면 같은 색이 주기적으로 반복되는 "차수(order)"가 나타납니다.</p>
+    </div>
+  </section>
+
+  <div class="summary">
+    <h4>📝 정리</h4>
+    <ul>
+      <li>건식 산화는 느리지만 막질이 우수(게이트 산화막), 습식 산화는 빠르다(두꺼운 필드 산화막).</li>
+      <li>Deal–Grove: 얇을 땐 반응 지배(선형), 두꺼울 땐 확산 지배(포물선).</li>
+      <li>두께 x의 산화막은 Si를 0.44x만큼 소모한다. LOCOS는 버즈비크 문제로 STI로 대체되었다.</li>
+      <li>산화막의 색은 박막 간섭으로 결정되며, 두께에 따라 주기적으로 변한다.</li>
+    </ul>
+  </div>
+  <div id="quiz"></div>
+</article>
+</main>
+</body>
+</html>

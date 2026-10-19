@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>반도체 공정 한눈에 보기 · SemiBook</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script defer src="../assets/js/common.js"></script>
+<script defer src="../assets/js/ch/intro.js"></script>
+</head>
+<body data-root="../" data-chapter="intro">
+<main class="main">
+<article class="article">
+  <header class="chapter-head">
+    <div class="eyebrow">CHAPTER 00</div>
+    <h1>반도체 공정 한눈에 보기</h1>
+    <p class="lede">스마트폰 속 칩 하나에는 수백억 개의 트랜지스터가 들어 있습니다. 머리카락 굵기의 1/10,000 크기 구조물을, 모래에서 얻은 실리콘 위에 어떻게 새겨 넣을까요? 이 장에서는 전체 지도를 먼저 펼쳐 봅니다.</p>
+    <div class="meta"><span class="chip">⏱ 15분</span><span class="chip">🧪 실험 4개</span><span class="chip">난이도 ●○○</span></div>
+  </header>
+
+  <h2><span class="sec">0.1</span>반도체란 무엇인가</h2>
+  <p>물질은 전기가 잘 통하는 <strong>도체</strong>, 거의 통하지 않는 <strong>부도체(절연체)</strong>, 그리고 그 중간인 <strong>반도체</strong>로 나뉩니다. 차이를 만드는 것은 전자가 가질 수 있는 에너지 띠 사이의 틈, 즉 <span class="hl">밴드갭(band gap)</span>입니다.</p>
+  <p>전자가 꽉 찬 <b>가전자대</b>에서 비어 있는 <b>전도대</b>로 올라가야 전류가 흐릅니다. 실리콘의 밴드갭은 1.12 eV로, 실온의 열에너지(약 0.026 eV)로도 아주 일부 전자가 넘어갈 수 있을 만큼 "적당히" 좁습니다. 바로 이 적당함 덕분에 불순물(도핑)이나 전압으로 전도도를 수십억 배 조절할 수 있습니다.</p>
+
+  <section class="lab" id="lab-band">
+    <div class="lab-head"><span class="badge">LAB 0-1</span><h4>밴드갭과 온도</h4><span class="sub">물질과 온도를 바꿔 전자가 얼마나 들뜨는지 보세요</span></div>
+    <div class="lab-body lab-grid">
+      <div>
+        <canvas id="band" data-ratio="0.62"></canvas>
+        <div class="legend"><span><i style="background:var(--blue)"></i>전자 (e⁻)</span><span><i style="border:2px solid var(--rose);background:transparent"></i>정공 (h⁺)</span><span class="muted">점의 개수는 로그 스케일로 과장했습니다</span></div>
+      </div>
+      <div class="controls">
+        <div class="ctrl"><span class="lbl">물질</span>
+          <div class="seg" data-name="mat"><button data-v="metal">도체 (Cu)</button><button data-v="si" class="on">실리콘</button><button data-v="gaas">GaAs</button><button data-v="oxide">SiO₂</button></div>
+        </div>
+        <div class="ctrl"><label>온도 <output data-for="T"></output></label><input type="range" name="T" min="10" max="800" value="300" step="5"></div>
+        <div class="readout">
+          <div class="r"><div class="k">밴드갭 E<sub>g</sub></div><div class="v" id="b-eg">—</div></div>
+          <div class="r"><div class="k">진성 캐리어 농도</div><div class="v" id="b-ni">—</div></div>
+          <div class="r"><div class="k">열에너지 kT</div><div class="v" id="b-kt">—</div></div>
+        </div>
+        <p class="hint">실리콘을 300 K → 600 K로 올리면 캐리어 수가 약 10만 배 증가합니다. 반도체 칩이 고온에서 누설 전류가 커지는 이유입니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <h2><span class="sec">0.2</span>칩을 만드는 8대 공정</h2>
+  <p>반도체 제조는 크게 <strong>전공정(Front-end, Fab)</strong>과 <strong>후공정(Back-end)</strong>으로 나뉩니다. 전공정에서는 웨이퍼 위에 회로를 층층이 쌓고, 후공정에서는 이를 검사하고 잘라 포장합니다. 흔히 말하는 "8대 공정"은 다음과 같습니다.</p>
+  <div class="cards">
+    <div class="card"><div class="ico">💿</div><h5>① 웨이퍼 제조</h5><p>순도 99.999999999%의 단결정 실리콘 잉곳을 얇게 잘라 거울처럼 연마합니다.</p></div>
+    <div class="card"><div class="ico">🔥</div><h5>② 산화</h5><p>고온에서 산소와 반응시켜 표면에 절연막(SiO₂)을 기릅니다.</p></div>
+    <div class="card"><div class="ico">🔦</div><h5>③ 포토</h5><p>감광액을 바르고 빛으로 마스크의 회로 패턴을 옮겨 그립니다.</p></div>
+    <div class="card"><div class="ico">⚡</div><h5>④ 식각</h5><p>패턴을 따라 필요 없는 막을 화학 용액이나 플라즈마로 깎아 냅니다.</p></div>
+    <div class="card"><div class="ico">🧬</div><h5>⑤ 증착 · 이온주입</h5><p>얇은 막을 원자 단위로 쌓고, 불순물을 주입해 전기적 성질을 부여합니다.</p></div>
+    <div class="card"><div class="ico">🔗</div><h5>⑥ 금속 배선</h5><p>수십억 개의 트랜지스터를 구리 배선으로 연결합니다.</p></div>
+    <div class="card"><div class="ico">🧪</div><h5>⑦ EDS 테스트</h5><p>웨이퍼 상태에서 각 칩의 전기적 동작을 검사해 양품을 골라냅니다.</p></div>
+    <div class="card"><div class="ico">📦</div><h5>⑧ 패키징</h5><p>칩을 잘라 외부와 연결하고 보호하는 옷을 입힙니다.</p></div>
+  </div>
+  <div class="callout note"><span class="t">반복이 핵심</span><p>②~⑥은 한 번으로 끝나지 않습니다. 최신 로직 칩은 마스크만 70~100장, 전체 공정 단계는 1,000단계가 넘고 웨이퍼 한 장이 완성되기까지 약 3개월이 걸립니다.</p></div>
+
+  <h2><span class="sec">0.3</span>트랜지스터 하나를 만들어 보자</h2>
+  <p>아래 시뮬레이터는 가장 단순한 <b>NMOS 트랜지스터</b> 하나가 만들어지는 과정을 15단계 단면도로 보여 줍니다. 패턴을 하나 새길 때마다 "코팅 → 노광 → 현상 → 식각 → 제거"가 반복되는 것에 주목하세요.</p>
+
+  <section class="lab" id="lab-flow">
+    <div class="lab-head"><span class="badge">LAB 0-2</span><h4>공정 단면 시뮬레이터</h4><span class="sub">▶ 재생 또는 ← → 키로 한 단계씩</span></div>
+    <div class="lab-body">
+      <canvas id="flow" data-ratio="0.5"></canvas>
+      <div class="stepper">
+        <button class="btn" id="f-prev">← 이전</button>
+        <button class="btn primary" id="f-play">▶ 자동 재생</button>
+        <button class="btn" id="f-next">다음 →</button>
+        <div class="dots" id="f-dots"></div>
+      </div>
+      <div class="step-text" id="f-text"></div>
+      <div class="legend" id="f-legend"></div>
+    </div>
+  </section>
+
+  <h2><span class="sec">0.4</span>얼마나 작을까? — 나노미터 감각</h2>
+  <p>"3나노 공정"이라는 말은 이제 마케팅 이름에 가깝지만, 실제로 트랜지스터의 핵심 부분은 수 nm 수준입니다. 1 nm는 실리콘 원자 약 4개를 나란히 놓은 길이입니다. 슬라이더를 움직여 웨이퍼에서 원자까지 10억 배를 확대해 보세요.</p>
+
+  <section class="lab" id="lab-scale">
+    <div class="lab-head"><span class="badge">LAB 0-3</span><h4>스케일 줌</h4><span class="sub">화면 폭 = 표시된 길이</span></div>
+    <div class="lab-body">
+      <canvas id="scale" data-ratio="0.42"></canvas>
+      <div class="ctrl" style="margin-top:12px"><label>화면 폭 <output data-for="z"></output></label><input type="range" id="zoom" name="z" min="-10" max="-0.3" value="-0.5" step="0.01"></div>
+      <div class="btn-row" id="scale-jump" style="margin-top:8px"></div>
+    </div>
+  </section>
+
+  <h2><span class="sec">0.5</span>무어의 법칙</h2>
+  <p>1965년 고든 무어는 "칩에 집적되는 트랜지스터 수가 매년(후에 2년으로 수정) 두 배가 된다"고 예측했습니다. 이 예측은 반세기 넘게 업계의 로드맵이자 자기실현적 예언이 되었습니다. 미세화(scaling)가 어려워진 지금은 3D 구조와 패키징이 그 바통을 이어받고 있습니다.</p>
+
+  <section class="lab" id="lab-moore">
+    <div class="lab-head"><span class="badge">LAB 0-4</span><h4>무어의 법칙 피팅</h4><span class="sub">점 위에 마우스를 올려 칩 정보를 확인</span></div>
+    <div class="lab-body lab-grid">
+      <canvas id="moore" data-ratio="0.66"></canvas>
+      <div class="controls">
+        <div class="ctrl"><label>2배가 되는 주기 <output data-for="dbl"></output></label><input type="range" name="dbl" min="1" max="4" value="2" step="0.05"></div>
+        <div class="readout">
+          <div class="r"><div class="k">예측 (2024년)</div><div class="v" id="m-pred">—</div></div>
+          <div class="r"><div class="k">평균 오차</div><div class="v" id="m-err">—</div></div>
+        </div>
+        <div class="step-text" id="m-info" style="min-height:96px">점 위에 마우스를 올려 보세요.</div>
+        <p class="hint">오차가 가장 작아지는 주기를 찾아보세요. 실제 데이터는 대략 2년 근처에서 가장 잘 맞습니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="summary">
+    <h4>📝 정리</h4>
+    <ul>
+      <li>반도체는 밴드갭이 적당히 작아 도핑·전압·온도로 전도도를 크게 조절할 수 있다.</li>
+      <li>8대 공정: 웨이퍼 → 산화 → 포토 → 식각 → 증착/이온주입 → 배선 → 테스트 → 패키징.</li>
+      <li>패턴 하나를 만들 때마다 코팅·노광·현상·식각·제거 사이클이 반복된다.</li>
+      <li>무어의 법칙: 트랜지스터 수는 약 2년마다 두 배로 증가해 왔다.</li>
+    </ul>
+  </div>
+
+  <div id="quiz"></div>
+</article>
+</main>
+</body>
+</html>

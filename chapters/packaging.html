@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>패키징 · SemiBook</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<style>
+  .scene { position: relative; height: 440px; perspective: 1400px; overflow: hidden; border-radius: 12px; background: radial-gradient(circle at 50% 40%, var(--surface), var(--surface-2)); touch-action: none; cursor: grab; }
+  .scene:active { cursor: grabbing; }
+  .stage { position: absolute; left: 50%; top: 62%; width: 0; height: 0; transform-style: preserve-3d; }
+  .slab { position: absolute; transform-style: preserve-3d; cursor: pointer; }
+  .slab .f { position: absolute; left: 0; top: 0; backface-visibility: visible; }
+  .slab .top { width: 100%; height: 100%; box-shadow: inset 0 0 0 1px rgba(255,255,255,.35); }
+  .slab.sel .top { box-shadow: inset 0 0 0 3px var(--accent), 0 0 24px var(--accent); }
+  .slab .lbl { position: absolute; left: 6px; top: 4px; font: 700 11px var(--font); color: rgba(255,255,255,.95); white-space: nowrap; text-shadow: 0 1px 2px rgba(0,0,0,.4); pointer-events: none; }
+  .pkg-svg { width: 100%; height: auto; display: block; }
+  @media (max-width: 560px) { .scene { height: 340px; } }
+</style>
+<script defer src="../assets/js/common.js"></script>
+<script defer src="../assets/js/ch/packaging.js"></script>
+</head>
+<body data-root="../" data-chapter="packaging">
+<main class="main">
+<article class="article">
+  <header class="chapter-head">
+    <div class="eyebrow">CHAPTER 09</div>
+    <h1>패키징</h1>
+    <p class="lede">웨이퍼에서 잘라 낸 칩은 손톱만 한 실리콘 조각일 뿐입니다. 외부와 전기를 주고받고, 열을 빼내고, 충격과 습기에서 보호하려면 옷을 입혀야 합니다. 예전엔 단순한 "포장"이었지만, 이제 패키징은 <b>칩 성능을 결정하는 핵심 기술</b>이 되었습니다. AI 반도체의 병목이 HBM과 첨단 패키징이라는 말이 나오는 이유입니다.</p>
+    <div class="meta"><span class="chip">⏱ 20분</span><span class="chip">🧪 실험 3개</span><span class="chip">난이도 ●●○</span></div>
+  </header>
+
+  <h2><span class="sec">9.1</span>전통적인 패키징 흐름</h2>
+  <figure>
+    <div class="fig-body"><svg class="fig" id="pflow" viewBox="0 0 880 190"></svg></div>
+    <figcaption><b>그림 9-1.</b> 백그라인딩 → 다이싱 → 다이 접착 → 와이어 본딩 → 몰딩 → 솔더볼 → 최종 테스트</figcaption>
+  </figure>
+  <div class="cards">
+    <div class="card"><div class="ico">🪚</div><h5>백그라인딩 · 다이싱</h5><p>775 µm 웨이퍼 뒷면을 50 µm 이하까지 갈아 얇게 만든 뒤, 다이아몬드 블레이드나 레이저로 칩을 낱개로 자릅니다.</p></div>
+    <div class="card"><div class="ico">🧵</div><h5>와이어 본딩</h5><p>머리카락보다 가는 금·구리선(15~25 µm)으로 칩 패드와 기판을 초당 20개 속도로 꿰맵니다.</p></div>
+    <div class="card"><div class="ico">🧱</div><h5>몰딩</h5><p>에폭시 몰딩 컴파운드(EMC)로 칩을 감싸 물리적·화학적 손상을 막습니다.</p></div>
+  </div>
+
+  <h2><span class="sec">9.2</span>패키지의 진화</h2>
+  <p>칩의 연산 능력이 커질수록 더 많은 신호선(I/O)을 더 짧게 연결해야 합니다. 패키지는 가장자리만 쓰던 와이어 본딩에서 칩 전체 면적을 쓰는 플립칩으로, 다시 칩을 나란히 놓는 2.5D, 위로 쌓는 3D로 진화했습니다.</p>
+
+  <section class="lab" id="lab-evo">
+    <div class="lab-head"><span class="badge">LAB 9-1</span><h4>패키지 진화 탐색기</h4><span class="sub">단면 구조 비교</span></div>
+    <div class="lab-body">
+      <div class="tabs" id="evo-tabs"></div>
+      <svg class="pkg-svg" id="evo-svg" viewBox="0 0 860 300"></svg>
+      <div class="readout" id="evo-out"></div>
+      <div class="step-text" id="evo-text"></div>
+    </div>
+  </section>
+
+  <h2><span class="sec">9.3</span>HBM — 메모리를 아파트처럼 쌓기</h2>
+  <p><b>HBM(High Bandwidth Memory)</b>은 D램 다이 8~16장을 쌓고, 각 층을 수천 개의 <b>TSV(실리콘 관통 전극)</b>로 수직 연결한 메모리입니다. GPU 바로 옆 실리콘 인터포저 위에 놓여 1,024개의 데이터 선으로 연결되므로, 일반 D램보다 훨씬 넓은 "도로"로 데이터를 주고받습니다.</p>
+
+  <section class="lab" id="lab-hbm">
+    <div class="lab-head"><span class="badge">LAB 9-2</span><h4>HBM + GPU 3D 분해도</h4><span class="sub">드래그로 회전 · 층을 클릭하면 설명</span></div>
+    <div class="lab-body lab-grid">
+      <div>
+        <div class="scene" id="scene"><div class="stage" id="stage"></div></div>
+      </div>
+      <div class="controls">
+        <div class="ctrl"><label>분해 정도 <output data-for="ex"></output></label><input type="range" name="ex" min="0" max="1" value="0.35" step="0.01"></div>
+        <div class="ctrl"><label>HBM 적층 수 <output data-for="n"></output></label><input type="range" name="n" min="4" max="16" value="12" step="4"></div>
+        <div class="ctrl"><span class="lbl">세대</span><div class="seg" data-name="gen"><button data-v="hbm3">HBM3</button><button data-v="hbm3e" class="on">HBM3E</button><button data-v="hbm4">HBM4</button></div></div>
+        <div class="readout">
+          <div class="r"><div class="k">스택당 대역폭</div><div class="v" id="hb-bw">—</div></div>
+          <div class="r"><div class="k">스택당 용량</div><div class="v" id="hb-cap">—</div></div>
+          <div class="r"><div class="k">GPU 총 대역폭 (×6)</div><div class="v" id="hb-tot">—</div></div>
+        </div>
+        <div class="step-text" id="hb-info"><b class="t">층을 클릭하세요</b>각 층의 역할이 표시됩니다.</div>
+      </div>
+    </div>
+  </section>
+
+  <h2><span class="sec">9.4</span>연결 밀도의 혁명</h2>
+  <p>칩과 칩을 잇는 범프의 간격(피치)이 줄어들수록 같은 면적에 더 많은 연결을 만들 수 있고, 신호 거리가 짧아져 비트당 에너지도 줄어듭니다. 구리끼리 직접 붙이는 <b>하이브리드 본딩</b>은 솔더 범프 없이 피치 수 µm까지 줄여 칩 두 개를 사실상 하나처럼 만듭니다.</p>
+
+  <section class="lab" id="lab-bump">
+    <div class="lab-head"><span class="badge">LAB 9-3</span><h4>인터커넥트 밀도 비교</h4><span class="sub">1 mm × 1 mm 영역</span></div>
+    <div class="lab-body lab-grid">
+      <canvas id="bump" data-ratio="0.7"></canvas>
+      <div class="controls">
+        <div class="ctrl"><span class="lbl">연결 방식</span><div class="seg" id="bump-preset"><button data-v="150">C4 범프</button><button data-v="40" class="on">마이크로범프</button><button data-v="9">하이브리드</button><button data-v="1">HB 차세대</button></div></div>
+        <div class="ctrl"><label>피치 <output data-for="p"></output></label><input type="range" name="p" min="0.5" max="200" value="40" step="0.5"></div>
+        <div class="readout">
+          <div class="r"><div class="k">연결 수 /mm²</div><div class="v" id="bp-n">—</div></div>
+          <div class="r"><div class="k">비트당 에너지(추정)</div><div class="v" id="bp-e">—</div></div>
+        </div>
+        <p class="hint">피치가 1/10이 되면 연결 밀도는 100배가 됩니다. 와이어 본딩은 칩 가장자리 패드만 쓰므로 밀도가 훨씬 낮습니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="summary">
+    <h4>📝 정리</h4>
+    <ul>
+      <li>패키징은 보호·전기 연결·방열을 담당하며, 첨단 패키징은 성능 향상의 핵심 수단이 되었다.</li>
+      <li>와이어 본딩 → 플립칩 → 2.5D 인터포저 → 3D 적층으로 연결 밀도와 대역폭이 증가했다.</li>
+      <li>HBM은 D램 다이를 TSV로 적층해 1,024비트 폭의 초광대역 인터페이스를 제공한다.</li>
+      <li>하이브리드 본딩은 µm급 피치로 칩 간 연결 밀도를 수백 배 높인다.</li>
+    </ul>
+  </div>
+  <div id="quiz"></div>
+</article>
+</main>
+</body>
+</html>

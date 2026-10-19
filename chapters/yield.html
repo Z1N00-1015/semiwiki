@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>테스트와 수율 · SemiBook</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script defer src="../assets/js/common.js"></script>
+<script defer src="../assets/js/ch/yield.js"></script>
+</head>
+<body data-root="../" data-chapter="yield">
+<main class="main">
+<article class="article">
+  <header class="chapter-head">
+    <div class="eyebrow">CHAPTER 08</div>
+    <h1>테스트와 수율</h1>
+    <p class="lede">웨이퍼 한 장이 완성되기까지 1,000단계가 넘는 공정을 거칩니다. 각 단계가 99.9% 완벽해도 0.999¹⁰⁰⁰ ≈ 37%입니다. <b>수율(yield)</b>은 반도체 회사의 수익을 결정하는 가장 중요한 숫자이며, 공정 기술력의 성적표입니다.</p>
+    <div class="meta"><span class="chip">⏱ 20분</span><span class="chip">🧪 실험 3개</span><span class="chip">난이도 ●●○</span></div>
+  </header>
+
+  <h2><span class="sec">8.1</span>EDS — 웨이퍼 위에서 칩 하나하나 검사하기</h2>
+  <p><b>EDS(Electrical Die Sorting)</b>는 웨이퍼를 자르기 전에 모든 칩에 바늘을 대고 전기 신호를 넣어 정상 동작 여부를 판정하는 공정입니다. 수천 개의 미세 바늘이 달린 <b>프로브 카드</b>가 칩의 패드에 닿고, 테스터가 수백만 개의 테스트 패턴을 흘려 보냅니다.</p>
+  <figure>
+    <div class="fig-body"><svg class="fig" id="probe" viewBox="0 0 860 240"></svg></div>
+    <figcaption><b>그림 8-1.</b> 프로브 카드와 웨이퍼. 바늘이 다이의 패드에 접촉해 테스터와 연결됩니다.</figcaption>
+  </figure>
+  <div class="cards">
+    <div class="card"><div class="ico">⚡</div><h5>전기적 특성 검사 (ET)</h5><p>트랜지스터 문턱 전압, 누설 전류, 저항 등 기본 파라미터를 측정합니다.</p></div>
+    <div class="card"><div class="ico">🔥</div><h5>번인 · 온도 테스트</h5><p>고온·고전압 스트레스로 초기에 고장 날 칩을 미리 걸러 냅니다(-40~125 °C).</p></div>
+    <div class="card"><div class="ico">🛠️</div><h5>리페어</h5><p>메모리는 여분의 행·열을 레이저 퓨즈로 바꿔 끼워 불량 셀을 살려 냅니다.</p></div>
+    <div class="card"><div class="ico">🗺️</div><h5>빈(bin) 분류 · 웨이퍼 맵</h5><p>결과를 웨이퍼 지도로 만들어 불량 패턴으로 공정 문제의 원인을 추적합니다.</p></div>
+  </div>
+
+  <h2><span class="sec">8.2</span>웨이퍼 맵은 범죄 현장이다</h2>
+  <p>불량 칩이 웨이퍼 위에 어떻게 분포하는지가 원인을 알려 줍니다. 무작위로 흩어지면 파티클, 가장자리에 몰리면 막 두께나 식각 불균일, 덩어리져 있으면 국소 오염, 일직선이면 스크래치입니다. 같은 수의 결함이라도 <b>뭉쳐 있으면</b> 한 칩에 여러 결함이 몰려 오히려 수율이 높게 나옵니다.</p>
+
+  <section class="lab" id="lab-map">
+    <div class="lab-head"><span class="badge">LAB 8-1</span><h4>웨이퍼 맵 시뮬레이터</h4><span class="sub">웨이퍼를 클릭하면 결함이 추가됩니다</span></div>
+    <div class="lab-body lab-grid">
+      <canvas id="wmap" data-ratio="1"></canvas>
+      <div class="controls">
+        <div class="ctrl"><span class="lbl">결함 패턴</span><div class="seg" data-name="pat"><button data-v="rand" class="on">무작위</button><button data-v="clus">클러스터</button><button data-v="edge">가장자리</button><button data-v="scr">스크래치</button></div></div>
+        <div class="ctrl"><label>결함 밀도 D₀ <output data-for="d0"></output></label><input type="range" name="d0" min="0" max="1.5" value="0.25" step="0.01"></div>
+        <div class="ctrl"><label>다이 크기 <output data-for="die"></output></label><input type="range" name="die" min="4" max="28" value="12" step="0.5"></div>
+        <div class="btn-row"><button class="btn" id="map-new">🎲 새 웨이퍼</button><button class="btn" id="map-clr">지우기</button></div>
+        <div class="readout">
+          <div class="r good"><div class="k">실측 수율</div><div class="v" id="mp-y">—</div></div>
+          <div class="r"><div class="k">푸아송 예측</div><div class="v" id="mp-p">—</div></div>
+          <div class="r"><div class="k">결함 수</div><div class="v" id="mp-n">—</div></div>
+          <div class="r"><div class="k">불량 다이</div><div class="v" id="mp-f">—</div></div>
+        </div>
+        <p class="hint">클러스터 모드에서 실측 수율이 푸아송 예측보다 높게 나오는 것을 확인하세요. 이것이 음이항(negative binomial) 모델이 필요한 이유입니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <h2><span class="sec">8.3</span>수율 모델</h2>
+  <p>결함이 웨이퍼에 무작위로 떨어진다면, 면적 A인 칩에 결함이 하나도 없을 확률은 푸아송 분포로 계산됩니다. 하지만 실제 결함은 뭉쳐 있으므로, 업계에서는 군집도 α를 넣은 음이항 모델을 주로 씁니다. α → ∞이면 푸아송과 같아집니다.</p>
+  <div class="eq">푸아송 <i>Y</i> = e<sup>−<i>AD</i>₀</sup> &nbsp;&nbsp;·&nbsp;&nbsp; 머피 <i>Y</i> = [(1 − e<sup>−<i>AD</i>₀</sup>)/<i>AD</i>₀]² &nbsp;&nbsp;·&nbsp;&nbsp; 음이항 <i>Y</i> = (1 + <i>AD</i>₀/α)<sup>−α</sup></div>
+
+  <section class="lab" id="lab-ym">
+    <div class="lab-head"><span class="badge">LAB 8-2</span><h4>수율 모델 비교</h4><span class="sub">칩 면적 × 결함 밀도</span></div>
+    <div class="lab-body lab-grid">
+      <canvas id="ym" data-ratio="0.62"></canvas>
+      <div class="controls">
+        <div class="ctrl"><label>칩 면적 A <output data-for="A"></output></label><input type="range" name="A" min="10" max="850" value="100" step="5"></div>
+        <div class="ctrl"><label>결함 밀도 D₀ <output data-for="d0"></output></label><input type="range" name="d0" min="0.01" max="1" value="0.1" step="0.01"></div>
+        <div class="ctrl"><label>군집 계수 α <output data-for="al"></output></label><input type="range" name="al" min="0.3" max="10" value="2" step="0.1"></div>
+        <div class="readout" id="ym-out"></div>
+      </div>
+    </div>
+  </section>
+
+  <h2><span class="sec">8.4</span>칩 하나는 얼마일까? — 그리고 칩렛</h2>
+  <p>칩의 원가는 대략 "웨이퍼 가격 ÷ 양품 다이 수"입니다. 다이가 커지면 웨이퍼당 다이 수도 줄고 수율도 떨어져 원가가 <b>면적보다 훨씬 빠르게</b> 증가합니다. 그래서 큰 칩을 여러 개의 작은 <b>칩렛(chiplet)</b>으로 쪼개 패키지에서 다시 합치는 전략이 널리 쓰입니다.</p>
+
+  <section class="lab" id="lab-cost">
+    <div class="lab-head"><span class="badge">LAB 8-3</span><h4>다이 원가 계산기</h4><span class="sub">모놀리식 vs 칩렛</span></div>
+    <div class="lab-body lab-grid">
+      <canvas id="cost" data-ratio="0.62"></canvas>
+      <div class="controls">
+        <div class="ctrl"><label>웨이퍼 가격 <output data-for="wc"></output></label><input type="range" name="wc" min="3000" max="30000" value="18000" step="500"></div>
+        <div class="ctrl"><label>전체 로직 면적 <output data-for="A"></output></label><input type="range" name="A" min="50" max="800" value="600" step="10"></div>
+        <div class="ctrl"><label>결함 밀도 D₀ <output data-for="d0"></output></label><input type="range" name="d0" min="0.03" max="0.5" value="0.1" step="0.01"></div>
+        <div class="ctrl"><label>칩렛 개수 <output data-for="n"></output></label><input type="range" name="n" min="1" max="8" value="4" step="1"></div>
+        <div class="readout" id="cost-out"></div>
+        <p class="hint">칩렛에는 다이 간 연결(D2D) 회로 면적 +10%와 칩렛당 조립 비용 $15, 조립 수율 99%를 가정했습니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="summary">
+    <h4>📝 정리</h4>
+    <ul>
+      <li>EDS는 웨이퍼 상태에서 모든 다이를 전기적으로 검사하고 메모리는 리페어까지 한다.</li>
+      <li>웨이퍼 맵의 불량 패턴은 공정 문제의 지문이다.</li>
+      <li>수율은 칩 면적 × 결함 밀도에 지수적으로 민감하며, 결함 군집을 반영해 음이항 모델을 쓴다.</li>
+      <li>큰 칩은 원가가 급증 → 칩렛으로 쪼개 수율을 높이고 패키지에서 합친다.</li>
+    </ul>
+  </div>
+  <div id="quiz"></div>
+</article>
+</main>
+</body>
+</html>
