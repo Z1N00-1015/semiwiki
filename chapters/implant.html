@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>이온 주입과 확산 · SemiBook</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script defer src="../assets/js/common.js"></script>
+<script defer src="../assets/js/ch/implant.js"></script>
+</head>
+<body data-root="../" data-chapter="implant">
+<main class="main">
+<article class="article">
+  <header class="chapter-head">
+    <div class="eyebrow">CHAPTER 06</div>
+    <h1>이온 주입과 확산</h1>
+    <p class="lede">순수한 실리콘은 전기가 잘 통하지 않습니다. 원자 10만~1억 개 중 하나를 붕소나 인으로 바꿔 주면 전도도가 수만 배 달라집니다. 이 "양념"을 원하는 곳에, 원하는 깊이로, 원하는 양만큼 넣는 기술이 <b>이온 주입(ion implantation)</b>입니다.</p>
+    <div class="meta"><span class="chip">⏱ 25분</span><span class="chip">🧪 실험 3개</span><span class="chip">난이도 ●●●</span></div>
+  </header>
+
+  <h2><span class="sec">6.1</span>n형과 p형</h2>
+  <p>실리콘(14족)은 최외각 전자 4개로 이웃 4개와 결합합니다. 여기에 전자가 5개인 <b>인(P)·비소(As)</b>를 넣으면 전자 하나가 남아 자유롭게 돌아다니는 <b>n형</b>, 전자가 3개인 <b>붕소(B)</b>를 넣으면 결합 하나가 비어 <b>정공(hole)</b>이 생기는 <b>p형</b>이 됩니다.</p>
+  <figure>
+    <div class="fig-body">
+      <div class="seg" id="dope-seg" style="max-width:420px;margin:0 auto 12px"><button data-v="i">진성 Si</button><button data-v="n" class="on">n형 (P 도핑)</button><button data-v="p">p형 (B 도핑)</button></div>
+      <svg class="fig" id="lattice" viewBox="0 0 640 300"></svg>
+    </div>
+    <figcaption><b>그림 6-1.</b> 2차원으로 그린 실리콘 결정. 도펀트가 내놓은 전자(파랑) 또는 정공(빨강 빈 원)이 이동합니다.</figcaption>
+  </figure>
+
+  <h2><span class="sec">6.2</span>이온 주입기 — 원자 크기의 총</h2>
+  <p>이온 주입기는 ① 이온 소스에서 BF₃·PH₃ 같은 기체를 이온화하고, ② <b>질량 분석 자석</b>으로 원하는 이온만 골라, ③ 수 keV~수 MeV로 가속해, ④ 웨이퍼 전면을 빔으로 훑어 박아 넣습니다. 자석 안에서 이온은 원을 그리는데, 그 반지름이 질량에 따라 다르기 때문에 원하는 이온만 출구 슬릿을 통과할 수 있습니다.</p>
+  <div class="eq"><i>r</i> = <i>mv</i> / <i>qB</i> = √(2<i>mV</i>/<i>q</i>) / <i>B</i><span class="where">m: 이온 질량, V: 추출 전압, B: 자기장. 무거운 이온일수록 덜 휜다.</span></div>
+
+  <section class="lab" id="lab-mass">
+    <div class="lab-head"><span class="badge">LAB 6-1</span><h4>질량 분석기</h4><span class="sub">자기장을 맞춰 원하는 이온만 슬릿으로 통과시키기</span></div>
+    <div class="lab-body lab-grid">
+      <canvas id="mass" data-ratio="0.7"></canvas>
+      <div class="controls">
+        <div class="ctrl"><span class="lbl">소스 가스</span><div class="seg" data-name="gas"><button data-v="bf3" class="on">BF₃</button><button data-v="ph3">PH₃</button><button data-v="ash3">AsH₃</button></div></div>
+        <div class="ctrl"><label>자기장 B <output data-for="B"></output></label><input type="range" name="B" min="0.05" max="1.0" value="0.30" step="0.001"></div>
+        <div class="readout">
+          <div class="r" id="ms-r"><div class="k">통과 이온</div><div class="v" id="ms-ion" style="font-size:15px">—</div></div>
+          <div class="r"><div class="k">추출 전압</div><div class="v">30 <small>kV</small></div></div>
+        </div>
+        <div class="step-text" id="ms-list" style="font-size:13.5px"></div>
+        <p class="hint">미션: BF₃에서 ¹¹B⁺만 골라 보세요. ¹⁰B⁺와 질량이 단 1 차이라 정밀하게 맞춰야 합니다. 얕은 접합을 위해 일부러 무거운 BF₂⁺를 쓰기도 합니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <h2><span class="sec">6.3</span>도핑 프로파일 — 가우시안 분포</h2>
+  <p>이온은 실리콘 원자와 수없이 충돌하며 에너지를 잃고 멈춥니다. 충돌은 무작위라 멈춘 깊이는 평균 <b>투사 거리 R<sub>p</sub></b>를 중심으로 표준편차 <b>ΔR<sub>p</sub></b>의 가우시안(정규) 분포를 이룹니다(LSS 이론). 넣은 이온의 총량은 <b>도즈 Q</b>(개/cm²)입니다.</p>
+  <div class="eq"><i>N</i>(<i>x</i>) = <i>Q</i> / (√(2π) Δ<i>R<sub>p</sub></i>) · exp[ −(<i>x</i> − <i>R<sub>p</sub></i>)² / 2Δ<i>R<sub>p</sub></i>² ]</div>
+  <p>주입 직후 불순물은 결정 격자 사이에 끼어 있어 전기적으로 비활성이고, 결정도 손상되어 있습니다. <b>어닐링(열처리)</b>으로 원자를 격자 자리에 넣고 손상을 회복하는데, 이때 확산이 일어나 분포가 퍼집니다. 확산 길이는 √(Dt)에 비례하며 확산 계수 D는 온도에 지수적으로 민감합니다.</p>
+  <div class="eq"><i>D</i> = <i>D</i>₀ exp(−<i>E</i><sub>a</sub>/<i>kT</i>) &nbsp;&nbsp; Δ<i>R<sub>p</sub></i>′² = Δ<i>R<sub>p</sub></i>² + 2<i>Dt</i></div>
+
+  <section class="lab" id="lab-prof">
+    <div class="lab-head"><span class="badge">LAB 6-2</span><h4>도핑 프로파일 & 어닐링</h4><span class="sub">로그 스케일 농도–깊이</span></div>
+    <div class="lab-body">
+      <div class="lab-grid">
+        <canvas id="prof" data-ratio="0.66"></canvas>
+        <div class="controls">
+          <div class="ctrl"><span class="lbl">도펀트</span><div class="seg" data-name="sp"><button data-v="B" class="on">B (p형)</button><button data-v="P">P (n형)</button><button data-v="As">As (n형)</button></div></div>
+          <div class="ctrl"><label>에너지 <output data-for="E"></output></label><input type="range" name="E" min="1" max="200" value="30" step="1"></div>
+          <div class="ctrl"><label>도즈 Q <output data-for="lq"></output></label><input type="range" name="lq" min="12" max="16" value="14" step="0.05"></div>
+          <div class="ctrl"><label>기판 농도 N<sub>B</sub> <output data-for="lb"></output></label><input type="range" name="lb" min="14" max="18" value="16" step="0.05"></div>
+          <div class="ctrl"><span class="lbl">어닐링</span><div class="seg" data-name="an"><button data-v="none">없음</button><button data-v="rta" class="on">RTA (스파이크)</button><button data-v="fur">퍼니스</button></div></div>
+          <div class="ctrl"><label>온도 <output data-for="T"></output></label><input type="range" name="T" min="800" max="1150" value="1050" step="5"></div>
+        </div>
+      </div>
+      <div class="readout">
+        <div class="r"><div class="k">R<sub>p</sub> 투사 거리</div><div class="v" id="pf-rp">—</div></div>
+        <div class="r"><div class="k">ΔR<sub>p</sub></div><div class="v" id="pf-drp">—</div></div>
+        <div class="r"><div class="k">최대 농도</div><div class="v" id="pf-pk">—</div></div>
+        <div class="r"><div class="k">확산 길이 2√(Dt)</div><div class="v" id="pf-dt">—</div></div>
+        <div class="r"><div class="k">접합 깊이 x<sub>j</sub></div><div class="v" id="pf-xj">—</div></div>
+      </div>
+      <p class="hint">RTA(급속 열처리)는 1초 정도만 고온을 유지해 확산을 최소화하고, 퍼니스는 30분간 가열합니다. 같은 온도에서 접합 깊이가 얼마나 달라지는지 비교해 보세요. 최신 공정은 밀리초 레이저 어닐링까지 씁니다.</p>
+    </div>
+  </section>
+
+  <h2><span class="sec">6.4</span>채널링 — 결정 속 고속도로</h2>
+  <p>실리콘은 원자가 질서정연하게 줄지어 있어서, 특정 방향에서 보면 원자 열 사이에 빈 "터널"이 보입니다. 이온이 이 방향으로 들어오면 원자와 정면충돌하지 않고 깊숙이 미끄러져 들어가는 <b>채널링</b>이 일어나 예상보다 훨씬 깊은 꼬리가 생깁니다. 그래서 웨이퍼를 7° 정도 기울여 주입하거나, 표면을 미리 비정질로 만듭니다.</p>
+
+  <section class="lab" id="lab-chan">
+    <div class="lab-head"><span class="badge">LAB 6-3</span><h4>이온 궤적 & 채널링</h4><span class="sub">단순화한 2D 충돌 시뮬레이션</span></div>
+    <div class="lab-body lab-grid">
+      <canvas id="chan" data-ratio="0.72"></canvas>
+      <div class="controls">
+        <div class="ctrl"><label>웨이퍼 기울기 <output data-for="tilt"></output></label><input type="range" name="tilt" min="0" max="15" value="0" step="0.5"></div>
+        <div class="ctrl"><label>이온 에너지 <output data-for="E"></output></label><input type="range" name="E" min="10" max="100" value="40" step="1"></div>
+        <div class="ctrl"><span class="lbl">기판 상태</span><div class="seg" data-name="mat"><button data-v="xtal" class="on">단결정</button><button data-v="amor">비정질 (PAI)</button></div></div>
+        <div class="btn-row"><button class="btn" id="ch-clear">↺ 기록 지우기</button></div>
+        <div class="readout">
+          <div class="r"><div class="k">평균 깊이</div><div class="v" id="ch-mean">—</div></div>
+          <div class="r"><div class="k">깊은 꼬리 비율</div><div class="v" id="ch-tail">—</div></div>
+        </div>
+        <p class="hint">기울기 0°에서 일부 이온이 원자 열 사이로 깊이 파고드는 것을 확인하세요. 오른쪽 막대는 정지 깊이 분포입니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="summary">
+    <h4>📝 정리</h4>
+    <ul>
+      <li>5족(P, As) 도핑 → n형(전자), 3족(B) 도핑 → p형(정공).</li>
+      <li>질량 분석 자석은 r = √(2mV/q)/B 원리로 원하는 이온만 골라낸다.</li>
+      <li>주입 분포는 Rp·ΔRp의 가우시안, 에너지↑ → 깊게, 도즈↑ → 농도↑.</li>
+      <li>어닐링은 활성화와 손상 회복을 하지만 확산을 일으킨다 → 짧고 뜨거운 RTA·레이저 어닐링.</li>
+      <li>채널링은 웨이퍼 기울임(7°)이나 비정질화로 억제한다.</li>
+    </ul>
+  </div>
+  <div id="quiz"></div>
+</article>
+</main>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>웨이퍼 제조 · SemiBook</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script defer src="../assets/js/common.js"></script>
+<script defer src="../assets/js/ch/wafer.js"></script>
+</head>
+<body data-root="../" data-chapter="wafer">
+<main class="main">
+<article class="article">
+  <header class="chapter-head">
+    <div class="eyebrow">CHAPTER 01</div>
+    <h1>웨이퍼 제조</h1>
+    <p class="lede">모든 반도체는 지름 300 mm, 두께 0.775 mm의 얇은 원판 위에서 태어납니다. 이 원판은 원자 배열이 끝에서 끝까지 완벽하게 정렬된 <b>단결정</b>이며, 불순물은 원자 1,000억 개 중 1개 미만입니다.</p>
+    <div class="meta"><span class="chip">⏱ 20분</span><span class="chip">🧪 실험 3개</span><span class="chip">난이도 ●○○</span></div>
+  </header>
+
+  <h2><span class="sec">1.1</span>모래에서 초고순도 실리콘으로</h2>
+  <p>실리콘은 지각에서 산소 다음으로 흔한 원소지만, 자연에서는 대부분 규석(SiO₂) 형태로 존재합니다. 반도체용 실리콘이 되려면 순도를 <b>99.999999999% (일레븐 나인, 11N)</b>까지 끌어올려야 합니다.</p>
+  <figure>
+    <div class="fig-body"><svg class="fig" id="purity" viewBox="0 0 860 230" style="width:100%;height:auto"></svg></div>
+    <figcaption><b>그림 1-1.</b> 실리콘 정제 단계와 순도. 막대 길이는 "나인(9)의 개수"입니다.</figcaption>
+  </figure>
+  <ol>
+    <li><b>환원:</b> 규석과 탄소를 아크로(≈2000 °C)에서 반응시켜 순도 98%의 금속급 실리콘(MG-Si)을 얻습니다. SiO₂ + 2C → Si + 2CO</li>
+    <li><b>기체화:</b> 염화수소와 반응시켜 액체인 트리클로로실란(SiHCl₃)으로 만든 뒤 증류로 불순물을 걸러 냅니다.</li>
+    <li><b>지멘스 공정:</b> 고온의 실리콘 막대 위에서 SiHCl₃를 수소로 환원해 다결정 실리콘(폴리실리콘)을 석출합니다.</li>
+  </ol>
+
+  <h2><span class="sec">1.2</span>초크랄스키(CZ) 결정 성장</h2>
+  <p>다결정 실리콘을 석영 도가니에 넣고 1,414 °C 이상으로 녹인 뒤, 작은 <b>종자 결정(seed)</b>을 담갔다가 천천히 회전시키며 끌어올립니다. 녹은 실리콘이 종자의 원자 배열을 그대로 따라 굳으면서 거대한 단결정 <b>잉곳(ingot)</b>이 자랍니다.</p>
+  <div class="callout tip"><span class="t">끌어올리는 속도 = 지름 조절 손잡이</span><p>빨리 끌어올리면 잉곳이 가늘어지고, 천천히 끌어올리면 굵어집니다. 실제 장비는 카메라로 메니스커스(고-액 경계의 빛나는 고리)를 보며 인상 속도와 히터 출력을 실시간으로 조절합니다.</p></div>
+
+  <section class="lab" id="lab-cz">
+    <div class="lab-head"><span class="badge">LAB 1-1</span><h4>잉곳 성장기</h4><span class="sub">목표: 지름 300 mm를 일정하게 유지하기</span></div>
+    <div class="lab-body lab-grid">
+      <div>
+        <canvas id="cz" data-ratio="0.78"></canvas>
+      </div>
+      <div class="controls">
+        <div class="ctrl"><label>인상 속도 <output data-for="v"></output></label><input type="range" name="v" min="0.3" max="2.0" value="1.0" step="0.01"></div>
+        <div class="ctrl"><label>용융액 과열 ΔT <output data-for="dT"></output></label><input type="range" name="dT" min="-8" max="8" value="0" step="0.1"></div>
+        <div class="ctrl"><label>결정 회전 <output data-for="rpm"></output></label><input type="range" name="rpm" min="2" max="30" value="12" step="1"></div>
+        <div class="btn-row"><button class="btn primary" id="cz-run">▶ 성장 시작</button><button class="btn" id="cz-reset">↺ 초기화</button></div>
+        <div class="readout">
+          <div class="r" id="cz-dr"><div class="k">현재 지름</div><div class="v" id="cz-d">—</div></div>
+          <div class="r"><div class="k">잉곳 길이</div><div class="v" id="cz-l">—</div></div>
+          <div class="r"><div class="k">단계</div><div class="v" id="cz-ph" style="font-size:14px">—</div></div>
+          <div class="r"><div class="k">V/G 비</div><div class="v" id="cz-vg" style="font-size:14px">—</div></div>
+        </div>
+        <p class="hint" id="cz-hint">처음에는 지름 수 mm의 <b>넥(neck)</b>을 가늘게 뽑아 전위(dislocation)를 제거한 뒤, 어깨(shoulder)를 넓혀 몸통(body)을 키웁니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <h3>점결함과 V/G — 보론코프 이론</h3>
+  <p>결정 속의 빈자리(공공, vacancy)와 끼어든 원자(격자간 원자, interstitial)의 비율은 인상 속도 V와 계면 온도 기울기 G의 비 <b>V/G</b>로 결정됩니다. V/G가 임계값(≈0.13 mm²/min·K)보다 크면 공공이, 작으면 격자간 원자가 남아 결함 덩어리를 만듭니다. 고급 웨이퍼는 이 값을 임계값 근처로 정밀하게 맞춘 "무결함(perfect) 결정"입니다.</p>
+
+  <h2><span class="sec">1.3</span>잉곳에서 웨이퍼로</h2>
+  <figure>
+    <div class="fig-body"><svg class="fig" id="shaping" viewBox="0 0 860 200" style="width:100%;height:auto"></svg></div>
+    <figcaption><b>그림 1-2.</b> 웨이퍼 가공 흐름. 다이아몬드 와이어로 자른 원판을 갈고, 화학적으로 다듬고, 거울처럼 연마합니다.</figcaption>
+  </figure>
+  <div class="table-wrap"><table>
+    <tr><th>웨이퍼 지름</th><th class="num">두께</th><th class="num">면적 (300 mm = 1)</th><th>양산 시기</th></tr>
+    <tr><td>100 mm (4인치)</td><td class="num">525 µm</td><td class="num">0.11</td><td>1970년대 후반</td></tr>
+    <tr><td>150 mm (6인치)</td><td class="num">675 µm</td><td class="num">0.25</td><td>1980년대</td></tr>
+    <tr><td>200 mm (8인치)</td><td class="num">725 µm</td><td class="num">0.44</td><td>1990년대</td></tr>
+    <tr><td>300 mm (12인치)</td><td class="num">775 µm</td><td class="num">1.00</td><td>2001년~현재 주력</td></tr>
+    <tr><td>450 mm (18인치)</td><td class="num">925 µm</td><td class="num">2.25</td><td>개발 후 보류</td></tr>
+  </table></div>
+
+  <h2><span class="sec">1.4</span>웨이퍼 한 장에 칩이 몇 개?</h2>
+  <p>원 안에 네모를 채우면 가장자리에서는 반드시 손실이 생깁니다. 칩(다이)이 클수록 손실 비율이 커지고, 결함에 걸릴 확률도 커집니다. 그래서 거대한 GPU 칩은 웨이퍼 한 장에서 수십 개밖에 나오지 않습니다.</p>
+  <div class="eq">DPW ≈ <i>π</i>(<i>d</i>/2)²/<i>S</i> − <i>π d</i> / √(2<i>S</i>)<span class="where">d: 웨이퍼 지름, S: 다이 면적 (첫 항은 면적 비, 둘째 항은 가장자리 손실 보정)</span></div>
+
+  <section class="lab" id="lab-dpw">
+    <div class="lab-head"><span class="badge">LAB 1-2</span><h4>다이 계산기</h4><span class="sub">빨간 칩 = 결함에 걸린 불량 다이</span></div>
+    <div class="lab-body lab-grid">
+      <div>
+        <canvas id="dpw" data-ratio="1"></canvas>
+      </div>
+      <div class="controls">
+        <div class="ctrl"><span class="lbl">웨이퍼 지름</span>
+          <div class="seg" data-name="D"><button data-v="150">150</button><button data-v="200">200</button><button data-v="300" class="on">300</button><button data-v="450">450</button></div>
+        </div>
+        <div class="ctrl"><label>다이 가로 <output data-for="dw"></output></label><input type="range" name="dw" min="2" max="33" value="10" step="0.5"></div>
+        <div class="ctrl"><label>다이 세로 <output data-for="dh"></output></label><input type="range" name="dh" min="2" max="26" value="10" step="0.5"></div>
+        <div class="ctrl"><label>가장자리 제외 <output data-for="ee"></output></label><input type="range" name="ee" min="0" max="6" value="3" step="0.5"></div>
+        <div class="ctrl"><label>결함 밀도 D₀ <output data-for="d0"></output></label><input type="range" name="d0" min="0" max="1" value="0.1" step="0.01"></div>
+        <div class="btn-row"><button class="btn" id="dpw-seed">🎲 결함 다시 뿌리기</button></div>
+        <div class="seg" id="dpw-preset" style="margin-top:2px"><button data-v="mob">모바일 AP</button><button data-v="cpu">PC CPU</button><button data-v="gpu">AI GPU</button></div>
+        <div class="readout">
+          <div class="r"><div class="k">총 다이 (실측)</div><div class="v" id="dpw-gross">—</div></div>
+          <div class="r"><div class="k">공식 추정</div><div class="v" id="dpw-est">—</div></div>
+          <div class="r good"><div class="k">양품 다이</div><div class="v" id="dpw-good">—</div></div>
+          <div class="r"><div class="k">수율 (푸아송)</div><div class="v" id="dpw-y">—</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <h2><span class="sec">1.5</span>결정 방향과 결정면</h2>
+  <p>실리콘은 <b>다이아몬드 입방 구조</b>로, 각 원자가 4개의 이웃과 정사면체 모양으로 결합합니다. 웨이퍼를 어느 방향으로 자르느냐에 따라 표면에 드러나는 원자 배열(결정면)이 달라지며, 밀러 지수 (hkl)로 표시합니다.</p>
+
+  <section class="lab" id="lab-xtal">
+    <div class="lab-head"><span class="badge">LAB 1-3</span><h4>결정면 뷰어</h4><span class="sub">드래그해서 회전</span></div>
+    <div class="lab-body lab-grid">
+      <canvas id="xtal" data-ratio="0.8"></canvas>
+      <div class="controls">
+        <div class="ctrl"><span class="lbl">결정면</span>
+          <div class="seg" data-name="plane"><button data-v="100" class="on">(100)</button><button data-v="110">(110)</button><button data-v="111">(111)</button></div>
+        </div>
+        <div class="ctrl"><label style="justify-content:flex-start;gap:8px"><input type="checkbox" name="bonds" checked> 공유 결합 표시</label></div>
+        <div class="ctrl"><label style="justify-content:flex-start;gap:8px"><input type="checkbox" name="spin" checked> 자동 회전</label></div>
+        <div class="step-text" id="xtal-info"></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="callout fact"><span class="t">노치(notch)는 왜 있을까?</span><p>300 mm 웨이퍼 가장자리에는 작은 V자 홈이 있습니다. 장비가 웨이퍼의 결정 방향을 알 수 있게 해 주는 표식으로, (100) 웨이퍼의 &lt;110&gt; 방향을 가리킵니다. 예전 작은 웨이퍼는 한쪽을 평평하게 깎은 플랫(flat)을 썼습니다.</p></div>
+
+  <div class="summary">
+    <h4>📝 정리</h4>
+    <ul>
+      <li>규석 → 금속급 Si(98%) → 트리클로로실란 정제 → 폴리실리콘(11N) 순으로 정제한다.</li>
+      <li>CZ법: 인상 속도와 온도로 잉곳 지름을, V/G로 점결함 종류를 제어한다.</li>
+      <li>다이가 클수록 가장자리 손실과 결함 확률이 커져 양품 수가 급격히 줄어든다.</li>
+      <li>CMOS에는 계면 결함이 가장 적은 (100) 웨이퍼를 주로 쓴다.</li>
+    </ul>
+  </div>
+  <div id="quiz"></div>
+</article>
+</main>
+</body>
+</html>

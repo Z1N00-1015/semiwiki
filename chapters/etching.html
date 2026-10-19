@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>식각 공정 · SemiBook</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script defer src="../assets/js/common.js"></script>
+<script defer src="../assets/js/ch/etching.js"></script>
+</head>
+<body data-root="../" data-chapter="etching">
+<main class="main">
+<article class="article">
+  <header class="chapter-head">
+    <div class="eyebrow">CHAPTER 04</div>
+    <h1>식각 공정</h1>
+    <p class="lede">노광으로 그린 감광액 패턴은 그림자에 불과합니다. <b>식각(etching)</b>은 이 그림자를 따라 아래의 막을 실제로 깎아 내 회로의 형태를 새기는 조각 공정입니다. 깊이 수 µm, 폭 수십 nm의 구멍을 수직으로 파내는 일은 현대 공학의 경이 중 하나입니다.</p>
+    <div class="meta"><span class="chip">⏱ 25분</span><span class="chip">🧪 실험 3개</span><span class="chip">난이도 ●●○</span></div>
+  </header>
+
+  <h2><span class="sec">4.1</span>식각의 4가지 성적표</h2>
+  <div class="cards">
+    <div class="card"><div class="ico">⏱️</div><h5>식각 속도</h5><p>단위 시간당 깎이는 두께 (nm/min). 빠를수록 생산성이 좋습니다.</p></div>
+    <div class="card"><div class="ico">⚖️</div><h5>선택비</h5><p>깎을 막 대 깎지 말아야 할 막(마스크·하부막)의 식각 속도 비. 높을수록 좋습니다.</p></div>
+    <div class="card"><div class="ico">📐</div><h5>이방성</h5><p>수직 방향만 깎이는 정도. 1이면 완벽한 수직 벽, 0이면 모든 방향으로 똑같이 깎이는 등방성.</p></div>
+    <div class="card"><div class="ico">🎯</div><h5>균일도</h5><p>웨이퍼 중앙과 가장자리의 식각량 차이. 300 mm 전체에서 1~2% 이내가 목표입니다.</p></div>
+  </div>
+  <div class="eq">이방성 <i>A</i> = 1 − <i>r</i><sub>lateral</sub> / <i>r</i><sub>vertical</sub> &nbsp;&nbsp;&nbsp; 선택비 <i>S</i> = <i>r</i><sub>film</sub> / <i>r</i><sub>mask</sub></div>
+
+  <h2><span class="sec">4.2</span>습식 식각 vs 건식 식각</h2>
+  <p><b>습식 식각</b>은 웨이퍼를 불산(HF) 같은 화학 용액에 담가 녹이는 방식입니다. 선택비가 높고 저렴하지만, 화학 반응은 방향이 없어 마스크 아래까지 파고드는 <b>언더컷</b>이 생깁니다. <b>건식 식각</b>은 플라즈마 속 이온을 전기장으로 가속해 수직으로 때리면서 화학 반응을 돕는 방식으로, 미세 패턴의 표준입니다.</p>
+
+  <section class="lab" id="lab-etch">
+    <div class="lab-head"><span class="badge">LAB 4-1</span><h4>식각 프로파일 시뮬레이터</h4><span class="sub">셀 오토마타 기반 단면 식각</span></div>
+    <div class="lab-body">
+      <div class="lab-grid">
+        <div>
+          <canvas id="etch" data-ratio="0.62"></canvas>
+          <div class="legend"><span><i style="background:var(--fig-pr)"></i>마스크(PR)</span><span><i style="background:var(--fig-oxide)"></i>식각 대상막 SiO₂ (500 nm)</span><span><i style="background:var(--fig-si)"></i>하부 Si</span><span><i style="background:#7a6a9c"></i>측벽 보호막</span></div>
+        </div>
+        <div class="controls">
+          <div class="ctrl"><span class="lbl">프리셋</span><div class="seg" id="etch-preset"><button data-v="wet">습식 HF</button><button data-v="rie" class="on">RIE</button><button data-v="bosch">Bosch</button></div></div>
+          <div class="ctrl"><label>이방성 (이온 비율) <output data-for="A"></output></label><input type="range" name="A" min="0" max="1" value="0.95" step="0.01"></div>
+          <div class="ctrl"><label>마스크 선택비 <output data-for="Sm"></output></label><input type="range" name="Sm" min="1" max="40" value="6" step="0.5"></div>
+          <div class="ctrl"><label>하부 Si 선택비 <output data-for="Ss"></output></label><input type="range" name="Ss" min="1" max="100" value="15" step="1"></div>
+          <div class="ctrl"><label>마스크 개구 폭 <output data-for="W"></output></label><input type="range" name="W" min="60" max="800" value="300" step="10"></div>
+          <div class="btn-row"><button class="btn primary" id="etch-go">▶ 식각</button><button class="btn" id="etch-reset">↺ 초기화</button></div>
+        </div>
+      </div>
+      <div class="readout">
+        <div class="r"><div class="k">식각 시간</div><div class="v" id="et-t">0 <small>s</small></div></div>
+        <div class="r"><div class="k">깊이</div><div class="v" id="et-d">—</div></div>
+        <div class="r"><div class="k">언더컷 (한쪽)</div><div class="v" id="et-u">—</div></div>
+        <div class="r"><div class="k">마스크 잔량</div><div class="v" id="et-m">—</div></div>
+        <div class="r"><div class="k">하부 Si 손실</div><div class="v" id="et-s">—</div></div>
+      </div>
+      <p class="hint">미션: 개구 폭 100 nm 이하의 좁은 구멍을 언더컷 20 nm 이내, 마스크를 다 잃지 않고, Si 손실 30 nm 이하로 뚫어 보세요. Bosch 모드는 식각/보호막 증착을 번갈아 하는 MEMS용 깊은 실리콘 식각(DRIE) 방식으로, 측벽에 물결무늬(scallop)가 남습니다.</p>
+    </div>
+  </section>
+
+  <h2><span class="sec">4.3</span>플라즈마 속에서 일어나는 일</h2>
+  <p>플라즈마는 전자·이온·중성 라디칼이 섞인 "제4의 상태"입니다. 가벼운 전자가 빠르게 움직이며 웨이퍼 표면을 음(−)으로 대전시키면, 웨이퍼 바로 위에 전자가 거의 없는 얇은 <b>쉬스(sheath)</b>가 생깁니다. 양이온은 이 쉬스의 강한 전기장에 가속되어 웨이퍼에 거의 수직으로 떨어집니다. 압력이 높으면 쉬스 안에서 기체 분자와 충돌해 방향이 흐트러집니다.</p>
+
+  <section class="lab" id="lab-plasma">
+    <div class="lab-head"><span class="badge">LAB 4-2</span><h4>플라즈마 챔버</h4><span class="sub">압력과 바이어스로 이온 입사각 분포 제어</span></div>
+    <div class="lab-body lab-grid">
+      <div>
+        <canvas id="plasma" data-ratio="0.66"></canvas>
+        <div class="legend"><span><i style="background:#ff6b8a"></i>양이온 (CF₃⁺)</span><span><i style="background:#7ad9ff"></i>전자</span><span><i style="background:#9be37a"></i>라디칼 (F·)</span></div>
+      </div>
+      <div class="controls">
+        <div class="ctrl"><label>챔버 압력 <output data-for="p"></output></label><input type="range" name="p" min="1" max="300" value="20" step="1"></div>
+        <div class="ctrl"><label>바이어스 전압 <output data-for="vb"></output></label><input type="range" name="vb" min="50" max="1000" value="400" step="10"></div>
+        <div class="readout">
+          <div class="r"><div class="k">평균 자유 행로</div><div class="v" id="pl-mfp">—</div></div>
+          <div class="r"><div class="k">쉬스 내 충돌</div><div class="v" id="pl-col">—</div></div>
+          <div class="r"><div class="k">평균 입사각</div><div class="v" id="pl-ang">—</div></div>
+        </div>
+        <canvas id="plhist" data-ratio="0.5"></canvas>
+        <p class="hint">입사각 분포 히스토그램 (0° = 수직). 낮은 압력·높은 바이어스일수록 좁고 수직에 가까워집니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <h2><span class="sec">4.4</span>언제 멈출까? — 엔드포인트 검출</h2>
+  <p>식각 대상막이 다 깎이는 순간을 놓치면 아래 막까지 손상됩니다. 장비는 플라즈마의 빛을 분광(OES)해 반응 생성물의 발광 세기를 감시합니다. 막이 사라지면 생성물이 줄어 신호가 떨어지죠. 하지만 웨이퍼 중앙과 가장자리의 식각 속도가 다르면 신호가 서서히 떨어져, 언제 멈출지 판단해야 합니다.</p>
+
+  <section class="lab" id="lab-ep">
+    <div class="lab-head"><span class="badge">LAB 4-3</span><h4>엔드포인트 게임</h4><span class="sub">신호를 보고 "정지"를 누르세요</span></div>
+    <div class="lab-body lab-grid">
+      <div>
+        <canvas id="ep" data-ratio="0.55"></canvas>
+        <canvas id="epx" data-ratio="0.2" style="margin-top:10px"></canvas>
+      </div>
+      <div class="controls">
+        <div class="ctrl"><label>식각 불균일도 <output data-for="nu"></output></label><input type="range" name="nu" min="0" max="20" value="8" step="1"></div>
+        <div class="btn-row"><button class="btn primary" id="ep-go">▶ 시작</button><button class="btn" id="ep-stop" disabled>■ 정지!</button></div>
+        <div class="readout">
+          <div class="r"><div class="k">경과 시간</div><div class="v" id="ep-t">0 <small>s</small></div></div>
+          <div class="r" id="ep-rr"><div class="k">판정</div><div class="v" id="ep-res" style="font-size:14px">—</div></div>
+        </div>
+        <p class="hint">아래 띠는 웨이퍼 지름 방향 단면입니다. 가장자리(느림)까지 막이 다 제거되면서 중앙(빠름)의 Si 손실이 최소인 순간이 정답입니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="summary">
+    <h4>📝 정리</h4>
+    <ul>
+      <li>습식 식각은 등방성·고선택비, 건식(플라즈마) 식각은 이방성으로 미세 패턴에 필수다.</li>
+      <li>이온의 수직 충돌(물리)과 라디칼의 화학 반응이 함께 작용할 때 빠르고 수직인 식각이 된다.</li>
+      <li>압력이 낮을수록 평균 자유 행로가 길어져 이온이 쉬스에서 충돌 없이 수직으로 입사한다.</li>
+      <li>엔드포인트 검출과 오버에치 관리가 하부막 손상과 잔류막 사이의 균형을 잡는다.</li>
+    </ul>
+  </div>
+  <div id="quiz"></div>
+</article>
+</main>
+</body>
+</html>
